@@ -1,0 +1,30 @@
+.acf-hi-hat-repeater {
+	display: flex;
+	flex-direction: column;
+}
+
+.hi-hat-repeater-items-wrap {
+	flex-grow: 1; /* Allows the items wrapper to take up available space */
+}
+
+.hi-hat-repeater-item {
+	margin-bottom: 10px;
+}
+
+.hi-hat-repeater-item:last-of-type {
+	margin-bottom: 0; /* No margin for the last item */
+}
+
+.hi-hat-repeater-item textarea {
+	width: 100%;
+	height: 100px;
+}
+
+.hi-hat-repeater-remove-button {
+	margin-top: 5px;
+}
+
+.hi-hat-repeater-add-button {
+	margin-top: 25px; /* Increase space above the add button */
+	align-self: flex-start; /* Prevent the button from stretching to full width */
+}

@@ -1,0 +1,86 @@
+# WordPress Plugin Development
+# https://github.com/github/gitignore/blob/main/WordPress.gitignore
+
+# Core WordPress files
+wp-admin/
+wp-content/
+wp-includes/
+index.php
+wp-*.php
+xmlrpc.php
+wp-config.php
+
+# wp-config.php
+wp-config.php
+
+# Server-specific files
+.htaccess
+.htpasswd
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+debug.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Dependency directories
+node_modules/
+bower_components/
+
+# PHP
+/vendor/
+composer.lock
+
+# Testing
+.phpunit.result.cache
+/coverage
+
+# Build tools
+/dist/
+/build/
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Local development files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# WordPress specific
+wp-cli.local.yml
+
+# Database dumps
+*.sql
+*.sql.gz
+
+# Plugin specific
+# Add any plugin-specific build artifacts or temporary files here

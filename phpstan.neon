@@ -1,0 +1,30 @@
+parameters:
+    level: 5
+    paths:
+        - hi-hat-repeater.php
+        - fields/
+        - src/
+    bootstrapFiles:
+        - tests/bootstrap.php
+    excludePaths:
+        - vendor/*
+        - node_modules/*
+        - tests/*
+    ignoreErrors:
+        # ACF functions that may not be available during static analysis
+        - '#Function acf_get_field_groups not found#'
+        - '#Function acf_get_fields not found#'
+        - '#Function register_graphql_field not found#'
+        - '#Function get_field not found#'
+        - '#Function get_post_type_object not found#'
+        # WordPress functions
+        - '#Function __ not found#'
+        - '#Function _e not found#'
+        - '#Function esc_attr not found#'
+        - '#Function esc_textarea not found#'
+        - '#Function esc_html not found#'
+        # Plugin constants
+        - '#Constant HI_HAT_REPEATER_URL not found#'
+        - '#Constant HI_HAT_REPEATER_PATH not found#'
+    treatPhpDocTypesAsCertain: false
+    checkMissingIterableValueType: false

@@ -1,0 +1,112 @@
+{
+  "name": "hi-hat-repeater",
+  "version": "1.0.0",
+  "description": "An Advanced Custom Fields add-on for a repeater-like field with multiple text areas.",
+  "main": "hi-hat-repeater.php",
+  "author": "Your Name <your.email@example.com>",
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/yourusername/hi-hat-repeater",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/hi-hat-repeater.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/hi-hat-repeater/issues"
+  },
+  "keywords": [
+    "wordpress",
+    "wordpress-plugin",
+    "advanced-custom-fields",
+    "acf",
+    "repeater",
+    "field"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "postcss css/input.css -o css/input.min.css --env production",
+    "build:js": "terser js/input.js -o js/input.min.js --compress --mangle --comments false",
+    "dev": "npm run dev:css && npm run dev:js",
+    "dev:css": "postcss css/input.css -o css/input.min.css --env development --watch",
+    "dev:js": "terser js/input.js -o js/input.min.js --compress --mangle --comments false --watch",
+    "watch": "npm run dev",
+    "lint": "npm run lint:css && npm run lint:js",
+    "lint:css": "stylelint 'css/**/*.css'",
+    "lint:js": "eslint 'js/**/*.js'",
+    "lint:fix": "npm run lint:css:fix && npm run lint:js:fix",
+    "lint:css:fix": "stylelint 'css/**/*.css' --fix",
+    "lint:js:fix": "eslint 'js/**/*.js' --fix",
+    "test": "npm run lint",
+    "clean": "rimraf css/*.min.css js/*.min.js",
+    "prebuild": "npm run clean",
+    "postinstall": "npm run build"
+  },
+  "devDependencies": {
+    "@wordpress/stylelint-config": "^21.0.0",
+    "autoprefixer": "^10.4.0",
+    "cssnano": "^6.0.0",
+    "eslint": "^8.0.0",
+    "postcss": "^8.4.0",
+    "postcss-cli": "^10.0.0",
+    "postcss-preset-env": "^8.0.0",
+    "rimraf": "^5.0.0",
+    "stylelint": "^15.0.0",
+    "terser": "^5.0.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "> 0.5%",
+    "not dead",
+    "WordPress 5.0"
+  ],
+  "stylelint": {
+    "extends": [
+      "@wordpress/stylelint-config"
+    ],
+    "rules": {
+      "no-descending-specificity": null,
+      "selector-class-pattern": null
+    }
+  },
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "es6": true,
+      "jquery": true
+    },
+    "extends": [
+      "eslint:recommended"
+    ],
+    "globals": {
+      "acf": "readonly",
+      "wp": "readonly"
+    },
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    },
+    "rules": {
+      "no-unused-vars": "warn",
+      "no-console": "warn",
+      "indent": ["error", 4],
+      "quotes": ["error", "single"],
+      "semi": ["error", "always"]
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "postcss-preset-env": {
+        "stage": 0,
+        "autoprefixer": {
+          "grid": true
+        }
+      },
+      "cssnano": {
+        "preset": "default"
+      }
+    }
+  }
+}
