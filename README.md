@@ -1,27 +1,26 @@
 # Hi-Hat Repeater
 
-[![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/hi-hat-repeater.svg)](https://wordpress.org/plugins/hi-hat-repeater/)
-[![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/hi-hat-repeater.svg)](https://wordpress.org/plugins/hi-hat-repeater/)
-[![WordPress Plugin Rating](https://img.shields.io/wordpress/plugin/r/hi-hat-repeater.svg)](https://wordpress.org/plugins/hi-hat-repeater/)
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![PHPStan](https://github.com/yourusername/hi-hat-repeater/actions/workflows/phpstan.yml/badge.svg)](https://github.com/yourusername/hi-hat-repeater/actions/workflows/phpstan.yml)
 
 An Advanced Custom Fields (ACF) add-on that provides a repeater-like field with multiple text areas. Perfect for content that needs multiple text entries in a structured format.
 
 ## Features
 
 - **Simple Repeater Field**: Add multiple text areas with easy add/remove functionality
-- **GraphQL Support**: Automatically registers GraphQL fields for your custom field types
+- **WPGraphQL ACF Integration**: Automatically registers GraphQL fields that return arrays of strings
+- **Field Group Support**: Works seamlessly within ACF field groups
 - **WordPress Standards**: Follows WordPress coding standards and best practices
-- **ACF Integration**: Seamlessly integrates with Advanced Custom Fields
-- **Responsive Design**: Clean, responsive interface that works across devices
+- **ACF Integration**: Fully compatible with Advanced Custom Fields
+- **Responsive Design**: Clean, responsive admin interface
+- **Asset Optimization**: Minified CSS and JavaScript for production use
+- **Development Tools**: Comprehensive linting, testing, and build tools
 
 ## Requirements
 
-- WordPress 5.0 or higher
+- WordPress 5.0 or higher (tested up to 6.4)
 - PHP 7.4 or higher
 - Advanced Custom Fields (ACF) 5.0.0 or higher
-- WPGraphQL (optional, for GraphQL features)
+- WPGraphQL ACF 2.0.0 or higher (for GraphQL features)
 
 ## Installation
 
@@ -47,12 +46,12 @@ cd hi-hat-repeater
 # Install PHP dependencies
 composer install
 
-# Install Node.js dependencies (if any)
+# Install Node.js dependencies and build assets
 npm install
 
 # Run development tools
-composer run lint
-composer run test
+composer run check      # Run lint, analyze, and test
+npm run lint           # Lint CSS and JS files
 ```
 
 ## Usage
@@ -68,13 +67,14 @@ composer run test
 
 ```php
 <?php
-// Get the repeater field values
+// Get the repeater field values (returns array of strings)
 $repeater_values = get_field('your_field_name');
 
-// Check if values exist
-if ($repeater_values) {
+// Check if values exist and iterate
+if ($repeater_values && is_array($repeater_values)) {
     echo '<ul>';
     foreach ($repeater_values as $value) {
+        // Each value is a string from a textarea
         echo '<li>' . esc_html($value) . '</li>';
     }
     echo '</ul>';
@@ -84,12 +84,27 @@ if ($repeater_values) {
 
 ### GraphQL Usage
 
-When using with WPGraphQL, the field is automatically available in your GraphQL schema:
+When using with WPGraphQL ACF, fields are automatically available in your GraphQL schema. The field returns an array of strings:
 
 ```graphql
 {
   post(id: 1) {
-    yourFieldName
+    yourFieldGroupName {
+      yourFieldName
+    }
+  }
+}
+```
+
+Example response:
+```json
+{
+  "data": {
+    "post": {
+      "yourFieldGroupName": {
+        "yourFieldName": ["First item", "Second item", "Third item"]
+      }
+    }
   }
 }
 ```
@@ -107,11 +122,18 @@ hi-hat-repeater/
 │   └── input.css                # Admin styles
 ├── js/
 │   └── input.js                 # Admin JavaScript
-├── .github/
-│   └── workflows/               # GitHub Actions
+├── tests/
+│   ├── bootstrap.php            # Test bootstrap
+│   └── HiHatRepeaterFieldTest.php # PHPUnit tests
 ├── composer.json                # PHP dependencies
+├── composer.lock                # Composer lock file
 ├── package.json                 # Node.js dependencies
-├── phpcs.xml                    # Code standards
+├── phpcs.xml                    # PHP CodeSniffer config
+├── phpstan.neon                 # PHPStan config
+├── phpunit.xml                  # PHPUnit config
+├── postcss.config.js            # PostCSS config
+├── LICENSE                      # License file
+├── WARP.md                      # Development notes
 └── README.md                    # This file
 ```
 
@@ -126,10 +148,19 @@ npm install
 composer run lint       # PHP_CodeSniffer
 composer run test       # PHPUnit tests
 composer run analyze    # PHPStan static analysis
+composer run check      # Run all checks
 
-# Build assets (if applicable)
-npm run build
-npm run watch
+# Build assets
+npm run build           # Build production assets
+npm run dev             # Build development assets
+npm run watch           # Watch for changes
+
+# Lint and fix code
+npm run lint            # Lint CSS and JS
+npm run lint:fix        # Fix linting issues
+
+# Clean build artifacts
+npm run clean
 ```
 
 ### Contributing
@@ -152,9 +183,14 @@ This plugin follows WordPress coding standards. Before submitting a pull request
 
 ### 1.0.0
 - Initial release
-- Basic repeater functionality
-- GraphQL support
+- Basic repeater functionality with add/remove textareas
+- Full WPGraphQL ACF integration
+- Automatic GraphQL schema registration
 - WordPress coding standards compliance
+- PHPUnit test suite
+- Asset build system with PostCSS and Terser
+- PHPStan static analysis support
+- Comprehensive development tooling
 
 ## Support
 
