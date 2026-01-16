@@ -65,4 +65,12 @@ class HiHatRepeaterFieldTest extends TestCase {
         $this->assertIsArray($result);
         $this->assertEquals(['Item 1', 'Item 2'], $result);
     }
+
+    /**
+     * Test GraphQL registration functions exist.
+     */
+    public function test_graphql_functions_exist() {
+        $this->assertTrue(function_exists('hi_hat_repeater_register_graphql_support'));
+        $this->assertTrue(function_exists('hi_hat_repeater_manual_graphql_registration'));
+    }
 }

@@ -76,4 +76,28 @@ class Hi_Hat_Repeater_Field extends acf_field {
 
 		return $value;
 	}
+
+	/**
+	 * Get the GraphQL type for this field.
+	 *
+	 * @return string|array
+	 */
+	public function get_graphql_type() {
+		return [ 'list_of' => 'String' ];
+	}
+
+	/**
+	 * Resolve the field value for GraphQL.
+	 *
+	 * @param mixed $value The field value.
+	 * @param mixed $post_id The post ID.
+	 * @param array $field The field settings.
+	 * @return mixed
+	 */
+	public function resolve_graphql_value( $value, $post_id, $field ) {
+		if ( is_array( $value ) ) {
+			return array_map( 'strval', array_filter( $value, 'strlen' ) );
+		}
+		return [];
+	}
 }
