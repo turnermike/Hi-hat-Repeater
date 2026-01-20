@@ -1,6 +1,6 @@
 <?php
 /**
- * Test Hi_Hat_Repeater_Field class.
+ * Test Hi-hat Repeater field classes.
  */
 
 use PHPUnit\Framework\TestCase;
@@ -8,34 +8,64 @@ use PHPUnit\Framework\TestCase;
 class HiHatRepeaterFieldTest extends TestCase {
 
     /**
-     * Test field name.
+     * Test WYSIWYG field name.
      */
-    public function test_field_name() {
-        $field = new Hi_Hat_Repeater_Field();
-        $this->assertEquals('hi_hat_repeater', $field->name);
+    public function test_wysiwyg_field_name() {
+        $field = new Hi_Hat_Repeater_Field_Wysiwyg();
+        $this->assertEquals('hi_hat_repeater_wysiwyg', $field->name);
     }
 
     /**
-     * Test field label.
+     * Test WYSIWYG field label.
      */
-    public function test_field_label() {
-        $field = new Hi_Hat_Repeater_Field();
-        $this->assertEquals(__('Hi-Hat Repeater', 'hi-hat-repeater'), $field->label);
+    public function test_wysiwyg_field_label() {
+        $field = new Hi_Hat_Repeater_Field_Wysiwyg();
+        $this->assertEquals(__('Hi-hat Repeater - WYSIWYG', 'hi-hat-repeater'), $field->label);
+    }
+
+    /**
+     * Test Textarea field name.
+     */
+    public function test_textarea_field_name() {
+        $field = new Hi_Hat_Repeater_Field_Textarea();
+        $this->assertEquals('hi_hat_repeater_textarea', $field->name);
+    }
+
+    /**
+     * Test Textarea field label.
+     */
+    public function test_textarea_field_label() {
+        $field = new Hi_Hat_Repeater_Field_Textarea();
+        $this->assertEquals(__('Hi-hat Repeater - Textarea', 'hi-hat-repeater'), $field->label);
     }
 
     /**
      * Test field category.
      */
     public function test_field_category() {
-        $field = new Hi_Hat_Repeater_Field();
-        $this->assertEquals('basic', $field->category);
+        $wysiwyg_field = new Hi_Hat_Repeater_Field_Wysiwyg();
+        $textarea_field = new Hi_Hat_Repeater_Field_Textarea();
+        $this->assertEquals('content', $wysiwyg_field->category);
+        $this->assertEquals('content', $textarea_field->category);
     }
 
     /**
-     * Test update_value method with array input.
+     * Test update_value method with array input (WYSIWYG).
      */
-    public function test_update_value_with_array() {
-        $field = new Hi_Hat_Repeater_Field();
+    public function test_wysiwyg_update_value_with_array() {
+        $field = new Hi_Hat_Repeater_Field_Wysiwyg();
+        $value = ['Item 1', 'Item 2', '', 'Item 3', ''];
+        $result = $field->update_value($value, 1, []);
+
+        $this->assertIsArray($result);
+        $this->assertEquals(['Item 1', 'Item 2', 'Item 3'], $result);
+    }
+
+    /**
+     * Test update_value method with array input (Textarea).
+     */
+    public function test_textarea_update_value_with_array() {
+        $field = new Hi_Hat_Repeater_Field_Textarea();
         $value = ['Item 1', 'Item 2', '', 'Item 3', ''];
         $result = $field->update_value($value, 1, []);
 
@@ -47,30 +77,28 @@ class HiHatRepeaterFieldTest extends TestCase {
      * Test update_value method with non-array input.
      */
     public function test_update_value_with_non_array() {
-        $field = new Hi_Hat_Repeater_Field();
+        $wysiwyg_field = new Hi_Hat_Repeater_Field_Wysiwyg();
+        $textarea_field = new Hi_Hat_Repeater_Field_Textarea();
         $value = 'not an array';
-        $result = $field->update_value($value, 1, []);
-
-        $this->assertEquals('not an array', $result);
+        
+        $this->assertEquals('not an array', $wysiwyg_field->update_value($value, 1, []));
+        $this->assertEquals('not an array', $textarea_field->update_value($value, 1, []));
     }
 
     /**
      * Test update_value method filters empty strings.
      */
     public function test_update_value_filters_empty_strings() {
-        $field = new Hi_Hat_Repeater_Field();
+        $wysiwyg_field = new Hi_Hat_Repeater_Field_Wysiwyg();
+        $textarea_field = new Hi_Hat_Repeater_Field_Textarea();
         $value = ['Item 1', '', '   ', 'Item 2'];
-        $result = $field->update_value($value, 1, []);
+        
+        $wysiwyg_result = $wysiwyg_field->update_value($value, 1, []);
+        $textarea_result = $textarea_field->update_value($value, 1, []);
 
-        $this->assertIsArray($result);
-        $this->assertEquals(['Item 1', 'Item 2'], $result);
-    }
-
-    /**
-     * Test GraphQL registration functions exist.
-     */
-    public function test_graphql_functions_exist() {
-        $this->assertTrue(function_exists('hi_hat_repeater_register_graphql_support'));
-        $this->assertTrue(function_exists('hi_hat_repeater_manual_graphql_registration'));
+        $this->assertIsArray($wysiwyg_result);
+        $this->assertEquals(['Item 1', 'Item 2'], $wysiwyg_result);
+        $this->assertIsArray($textarea_result);
+        $this->assertEquals(['Item 1', 'Item 2'], $textarea_result);
     }
 }

@@ -2,12 +2,15 @@
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
 
-An Advanced Custom Fields (ACF) add-on that provides a repeater-like field with multiple text areas. Perfect for content that needs multiple text entries in a structured format.
+An Advanced Custom Fields (ACF) add-on that provides two repeater field types: **Hi-hat Repeater - WYSIWYG** for rich text editing and **Hi-hat Repeater - Textarea** for plain text entries.
 
 ## Features
 
-- **Simple Repeater Field**: Add multiple text areas with easy add/remove functionality
-- **WPGraphQL ACF Integration**: Automatically registers GraphQL fields that return arrays of strings
+- **Two Field Types**: Choose **Hi-hat Repeater - WYSIWYG** for rich text or **Hi-hat Repeater - Textarea** for plain text
+- **Full WordPress WYSIWYG**: WYSIWYG field type provides the default WordPress editor with Visual/Text tabs, TinyMCE toolbar, and media buttons
+- **Rich Text Editing**: Full TinyMCE toolbar with formatting, links, media, and all standard editor features
+- **Media Upload Integration**: Built-in media library access for each WYSIWYG editor instance
+- **WPGraphQL ACF Integration**: Automatically registers GraphQL fields that return arrays of HTML strings
 - **Field Group Support**: Works seamlessly within ACF field groups
 - **WordPress Standards**: Follows WordPress coding standards and best practices
 - **ACF Integration**: Fully compatible with Advanced Custom Fields
@@ -59,32 +62,34 @@ npm run lint           # Lint CSS and JS files
 ### Basic Usage
 
 1. After activation, create or edit a Field Group in ACF
-2. Add a new field and select "Hi-Hat Repeater" from the field type dropdown
-3. Configure your field settings as needed
-4. Save the field group
+2. Add a new field and select either:
+   - **Hi-hat Repeater - WYSIWYG** for rich text editing with full WordPress editor
+   - **Hi-hat Repeater - Textarea** for plain text entries
+3. Save the field group
 
 ### In Templates
 
+Both field types return an array of strings. Use **Hi-hat Repeater - Textarea** for plain text and **Hi-hat Repeater - WYSIWYG** for HTML.
+
 ```php
 <?php
-// Get the repeater field values (returns array of strings)
 $repeater_values = get_field('your_field_name');
 
-// Check if values exist and iterate
 if ($repeater_values && is_array($repeater_values)) {
-    echo '<ul>';
+    echo '<div class="content-blocks">';
     foreach ($repeater_values as $value) {
-        // Each value is a string from a textarea
-        echo '<li>' . esc_html($value) . '</li>';
+        // For Textarea field type: use esc_html() for plain text
+        // For WYSIWYG field type: use wp_kses_post() for HTML
+        echo '<div class="content-block">' . wp_kses_post($value) . '</div>';
     }
-    echo '</ul>';
+    echo '</div>';
 }
 ?>
 ```
 
 ### GraphQL Usage
 
-When using with WPGraphQL ACF, fields are automatically available in your GraphQL schema. The field returns an array of strings:
+With WPGraphQL ACF, both field types are available in your GraphQL schema. They return an array of strings (plain text for **Hi-hat Repeater - Textarea**, HTML for **Hi-hat Repeater - WYSIWYG**):
 
 ```graphql
 {
@@ -102,7 +107,7 @@ Example response:
   "data": {
     "post": {
       "yourFieldGroupName": {
-        "yourFieldName": ["First item", "Second item", "Third item"]
+        "yourFieldName": ["<p>First <strong>rich text</strong> item</p>", "<p>Second item with <a href='#'>link</a></p>", "<p>Third item</p>"]
       }
     }
   }
@@ -117,7 +122,9 @@ Example response:
 hi-hat-repeater/
 ├── hi-hat-repeater.php          # Main plugin file
 ├── fields/
-│   └── class-hi-hat-repeater-field.php  # ACF field class
+│   ├── class-hi-hat-repeater-field-base.php      # Base field class
+│   ├── class-hi-hat-repeater-field-wysiwyg.php   # WYSIWYG field type
+│   └── class-hi-hat-repeater-field-textarea.php  # Textarea field type
 ├── css/
 │   └── input.css                # Admin styles
 ├── js/
@@ -180,6 +187,26 @@ This plugin follows WordPress coding standards. Before submitting a pull request
 - Ensure all tests pass with `composer run test`
 
 ## Changelog
+
+### 1.2.1
+- **Bug Fix**: Resolved deprecated function warning for editor IDs with brackets
+- Manual editor HTML structure to avoid wp_editor() ID restrictions
+- Proper ACF field submission with array naming while using clean editor IDs
+- Enhanced editor initialization for both existing and cloned editors
+
+### 1.2.0
+- **Major Feature**: Complete WordPress WYSIWYG editor integration
+- Each repeater item now has a full WordPress editor with Visual/Text tabs
+- Proper TinyMCE initialization and cleanup for cloned editors
+- Media upload integration for each editor instance
+- Simplified and robust JavaScript for editor lifecycle management
+
+### 1.1.0
+- **Major Feature**: Upgraded from textarea to WYSIWYG editors
+- Full TinyMCE integration with media upload support
+- Enhanced JavaScript for proper WYSIWYG editor lifecycle management
+- Updated field value processing to handle HTML content
+- Improved GraphQL resolvers for HTML content filtering
 
 ### 1.0.0
 - Initial release

@@ -1,6 +1,6 @@
 {
   "name": "hi-hat-repeater",
-  "version": "1.0.0",
+  "version": "1.2.1",
   "description": "An Advanced Custom Fields add-on for a repeater-like field with multiple text areas.",
   "main": "hi-hat-repeater.php",
   "author": "Your Name <your.email@example.com>",

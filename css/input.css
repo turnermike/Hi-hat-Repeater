@@ -17,7 +17,16 @@
 
 .hi-hat-repeater-item textarea {
 	width: 100%;
+}
+
+.hi-hat-repeater-item textarea:not(.wp-editor-area) {
 	height: 100px;
+}
+
+/* Ensure WYSIWYG editor text is visible */
+.hi-hat-repeater-item .wp-editor-area {
+	color: #2c3338;
+	background-color: #fff;
 }
 
 .hi-hat-repeater-remove-button {
