@@ -29,9 +29,11 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base {
 		acf_enqueue_uploader();
 
 		$values     = is_array( $field['value'] ) ? $field['value'] : array( '' );
+		$template_id = 'hi_hat_wysiwyg_template_' . sanitize_html_class( $field['name'] );
 		$data_attrs = sprintf(
-			' data-name="%s" data-field-type="wysiwyg"',
-			esc_attr( $field['name'] )
+			' data-name="%s" data-field-type="wysiwyg" data-wysiwyg-template="%s"',
+			esc_attr( $field['name'] ),
+			esc_attr( $template_id )
 		);
 		?>
 		<div class="acf-hi-hat-repeater"<?php echo $data_attrs; ?>>
@@ -45,6 +47,27 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base {
 			</div>
 			<a href="#" class="hi-hat-repeater-add-button button button-primary"><?php esc_html_e( 'Add', 'hi-hat-repeater' ); ?></a>
 		</div>
+		<script type="text/html" id="<?php echo esc_attr( $template_id ); ?>" class="hi-hat-repeater-template">
+			<div class="hi-hat-repeater-item">
+				<div id="wp-__EDITOR_ID__-wrap" class="wp-core-ui wp-editor-wrap tmce-active">
+					<div id="wp-__EDITOR_ID__-editor-tools" class="wp-editor-tools hide-if-no-js">
+						<?php if ( current_user_can( 'upload_files' ) ) : ?>
+						<div id="wp-__EDITOR_ID__-media-buttons" class="wp-media-buttons">
+							<?php do_action( 'media_buttons', '__EDITOR_ID__' ); ?>
+						</div>
+						<?php endif; ?>
+						<div class="wp-editor-tabs">
+							<button type="button" id="__EDITOR_ID__-tmce" class="wp-switch-editor switch-tmce" data-wp-editor-id="__EDITOR_ID__"><?php esc_html_e( 'Visual', 'hi-hat-repeater' ); ?></button>
+							<button type="button" id="__EDITOR_ID__-html" class="wp-switch-editor switch-html" data-wp-editor-id="__EDITOR_ID__"><?php esc_html_e( 'Text', 'hi-hat-repeater' ); ?></button>
+						</div>
+					</div>
+					<div id="wp-__EDITOR_ID__-editor-container" class="wp-editor-container">
+						<textarea class="wp-editor-area" rows="10" cols="40" name="<?php echo esc_attr( $field['name'] ); ?>[]" id="__EDITOR_ID__"></textarea>
+					</div>
+				</div>
+				<a href="#" class="hi-hat-repeater-remove-button button button-small"><?php esc_html_e( 'Remove', 'hi-hat-repeater' ); ?></a>
+			</div>
+		</script>
 		<?php
 	}
 
