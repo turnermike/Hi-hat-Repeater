@@ -23,6 +23,12 @@
 	height: 100px;
 }
 
+/* keep HTML mode textarea text visible */
+.hi-hat-repeater-item .wp-editor-wrap.html-active .wp-editor-area {
+	color: #121212 !important;
+	background-color: #fff !important;
+}
+
 /* Ensure WYSIWYG editor text is visible */
 .hi-hat-repeater-item .wp-editor-area {
 	color: #2c3338;

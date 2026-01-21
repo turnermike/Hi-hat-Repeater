@@ -1,5 +1,14 @@
 ;(function( $ ) {
     var editorContentStyle = 'body { color: #121212; background-color: #fff; }';
+    var baseTinymceConfig = {
+        toolbar1: 'formatselect bold italic strikethrough bullist numlist blockquote alignleft aligncenter alignright link unlink wp_adv',
+        toolbar2: 'forecolor pastetext removeformat charmap outdent indent undo redo wp_help',
+        plugins: 'charmap colorpicker hr lists paste tabfocus textcolor fullscreen wordpress wpeditimage wpgallery wplink wpdialogs wpview',
+        resize: 'vertical',
+        menubar: false,
+        wpautop: true,
+        body_class: 'id post-type-post post-status-publish post-format-standard'
+    };
 
     function ensureVisual(editorId) {
         if ( ! editorId ) {
@@ -197,7 +206,6 @@
             
             // Wait for WordPress editor to be ready, then initialize
             var initEditor = function() {
-                // Remove any existing editor instance first
                 if ( typeof tinymce !== 'undefined' ) {
                     var existingEditor = tinymce.get( newEditorId );
                     if ( existingEditor ) {
@@ -207,10 +215,13 @@
 
                 if ( typeof wp !== 'undefined' && wp.editor && wp.editor.initialize ) {
                     try {
+                        var tinymceConfig = $.extend( true, {}, baseTinymceConfig, {
+                            selector: '#' + newEditorId,
+                            content_style: editorContentStyle
+                        } );
+
                         wp.editor.initialize( newEditorId, {
-                            tinymce: {
-                                content_style: editorContentStyle
-                            },
+                            tinymce: tinymceConfig,
                             quicktags: true,
                             mediaButtons: true
                         } );
