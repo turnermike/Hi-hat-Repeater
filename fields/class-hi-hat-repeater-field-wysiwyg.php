@@ -45,7 +45,7 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base {
 					</div>
 				<?php endforeach; ?>
 			</div>
-			<a href="#" class="hi-hat-repeater-add-button button button-primary"><?php esc_html_e( 'Add', 'hi-hat-repeater' ); ?></a>
+			<a href="#" class="hi-hat-repeater-add-button button button-primary" style="margin-top: 28px;"><?php esc_html_e( 'Add', 'hi-hat-repeater' ); ?></a>
 		</div>
 		<script type="text/html" id="<?php echo esc_attr( $template_id ); ?>" class="hi-hat-repeater-template">
 			<div class="hi-hat-repeater-item">
@@ -65,7 +65,7 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base {
 						<textarea class="wp-editor-area" rows="10" cols="40" name="<?php echo esc_attr( $field['name'] ); ?>[]" id="__EDITOR_ID__"></textarea>
 					</div>
 				</div>
-				<a href="#" class="hi-hat-repeater-remove-button button button-small"><?php esc_html_e( 'Remove', 'hi-hat-repeater' ); ?></a>
+				<a href="#" class="hi-hat-repeater-remove-button button button-small" style="margin-top:14px"><?php esc_html_e( 'Remove', 'hi-hat-repeater' ); ?></a>
 			</div>
 		</script>
 		<?php

@@ -70,12 +70,19 @@
         return { html: html, id: newId };
     }
 
+    function updateRemoveButtons( $wrapper ) {
+        var show = $wrapper.find( '.hi-hat-repeater-item' ).length > 1;
+        $wrapper.find( '.hi-hat-repeater-remove-button' ).toggle( show );
+    }
+
     function initialize_field( $field ) {
         var $wrapper = $field.find( '.hi-hat-repeater-items-wrap' );
         var $repeater = $field.find( '.acf-hi-hat-repeater' ).first();
         var fieldType = getFieldType( $repeater );
         var fieldName = getFieldName( $repeater );
         var fieldSlug = fieldName.replace( /[^\w-]/g, '_' );
+
+        updateRemoveButtons( $wrapper );
 
         // Remove any existing handlers to avoid duplicates
         $field.off( 'click', '.hi-hat-repeater-add-button' );
@@ -173,6 +180,8 @@
             console.log( 'Appending new item with editor ID:', newEditorId );
             $wrapper.append( $newItem );
             
+            updateRemoveButtons( $wrapper );
+
             // Force existing editors to switch back to Visual so they keep their toolbar
             $wrapper.find( 'textarea.wp-editor-area' ).each( function() {
                 var existingId = this.id;
@@ -366,6 +375,8 @@
                 }
 
                 $item.remove();
+
+                updateRemoveButtons( $wrapper );
             }
         });
     }

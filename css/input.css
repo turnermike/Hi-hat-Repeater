@@ -36,11 +36,11 @@
 }
 
 .hi-hat-repeater-remove-button {
-	margin-top: 5px;
+	margin-top: 12px;
 	margin-bottom: 10px;
 }
 
 .hi-hat-repeater-add-button {
-	margin-top: 25px; /* Increase space above the add button */
-	align-self: flex-start; /* Prevent the button from stretching to full width */
+	margin-top: 28px;
+	align-self: flex-start;
 }

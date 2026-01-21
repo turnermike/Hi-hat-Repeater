@@ -34,11 +34,11 @@ class Hi_Hat_Repeater_Field_Textarea extends Hi_Hat_Repeater_Field_Base {
 				<?php foreach ( $values as $i => $value ) : ?>
 					<div class="hi-hat-repeater-item">
 						<?php $this->render_textarea_item( $field, $value, $i ); ?>
-						<a href="#" class="hi-hat-repeater-remove-button button button-small"><?php esc_html_e( 'Remove', 'hi-hat-repeater' ); ?></a>
+						<a href="#" class="hi-hat-repeater-remove-button button button-small" style="margin-top:14px"><?php esc_html_e( 'Remove', 'hi-hat-repeater' ); ?></a>
 					</div>
 				<?php endforeach; ?>
 			</div>
-			<a href="#" class="hi-hat-repeater-add-button button button-primary"><?php esc_html_e( 'Add', 'hi-hat-repeater' ); ?></a>
+			<a href="#" class="hi-hat-repeater-add-button button button-primary" style="margin-top: 28px;"><?php esc_html_e( 'Add', 'hi-hat-repeater' ); ?></a>
 		</div>
 		<?php
 	}
