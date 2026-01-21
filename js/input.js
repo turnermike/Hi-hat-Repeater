@@ -99,6 +99,41 @@
                 var timestamp = Date.now();
                 $textarea.attr( 'id', 'hi_hat_textarea_' + fieldName + '_' + timestamp );
                 $wrapper.append( $newItem );
+                updateRemoveButtons( $wrapper );
+                return;
+            }
+
+            if ( fieldType === 'image' ) {
+                var $existingItem = $wrapper.find( '.hi-hat-repeater-item' ).first();
+                var $newItem;
+                
+                if ( $existingItem.length ) {
+                    $newItem = $existingItem.clone();
+                    var timestamp = Date.now();
+                    var newInputId = 'hi_hat_image_' + fieldName + '_' + timestamp;
+                    
+                    // Clear the image data
+                    var $input = $newItem.find( '.hi-hat-repeater-image-input' );
+                    $input.val( '' ).attr( 'id', newInputId );
+                    
+                    // Clear preview
+                    var $preview = $newItem.find( '.hi-hat-repeater-image-preview' );
+                    $preview.hide().find( 'img' ).remove();
+                    
+                    // Update button text
+                    var $selectButton = $newItem.find( '.hi-hat-repeater-image-select-button' );
+                    $selectButton.text( 'Select Image' );
+                    
+                    // Hide remove image button
+                    var $removeImageButton = $newItem.find( '.hi-hat-repeater-image-remove-button' );
+                    $removeImageButton.hide();
+                } else {
+                    console.error( 'No existing image item to clone' );
+                    return;
+                }
+                
+                $wrapper.append( $newItem );
+                updateRemoveButtons( $wrapper );
                 return;
             }
 
@@ -381,10 +416,107 @@
         });
     }
 
+    // Set up image field handlers once at document level (not per field)
+    // This ensures they work even if fields are added dynamically
+    $( document ).ready( function() {
+        // Handle image selection - use ACF's media uploader pattern
+        $( document ).on( 'click', '.hi-hat-repeater-image-select-button', function( e ) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var $button = $( this );
+            var $item = $button.closest( '.hi-hat-repeater-item' );
+            if ( ! $item.length ) {
+                console.error( 'Could not find repeater item' );
+                return;
+            }
+            
+            var $input = $item.find( '.hi-hat-repeater-image-input' );
+            var $preview = $item.find( '.hi-hat-repeater-image-preview' );
+            var $removeImageButton = $item.find( '.hi-hat-repeater-image-remove-button' );
+            var attachmentId = $input.val();
+
+            // Check if wp.media is available - wait a bit if not ready
+            if ( typeof wp === 'undefined' || ! wp.media ) {
+                console.error( 'WordPress media library is not available. Make sure acf_enqueue_uploader() is called.' );
+                // Try to wait for it
+                setTimeout( function() {
+                    if ( typeof wp !== 'undefined' && wp.media ) {
+                        $button.trigger( 'click' );
+                    } else {
+                        alert( 'Media library is not available. Please refresh the page.' );
+                    }
+                }, 100 );
+                return;
+            }
+
+            // Create a new media frame for this selection
+            var mediaFrame = wp.media({
+                title: 'Select Image',
+                button: {
+                    text: 'Use this image'
+                },
+                multiple: false,
+                library: {
+                    type: 'image'
+                }
+            });
+
+            // When an image is selected, run a callback
+            mediaFrame.on( 'select', function() {
+                var attachment = mediaFrame.state().get( 'selection' ).first().toJSON();
+                var imageId = attachment.id;
+                $input.val( imageId );
+                
+                // Use thumbnail if available, otherwise use full size
+                var imageUrl = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
+                if ( ! imageUrl && attachment.url ) {
+                    imageUrl = attachment.url;
+                }
+                
+                if ( imageUrl ) {
+                    $preview.html( '<img src="' + imageUrl + '" alt="' + ( attachment.alt || '' ) + '" style="max-width: 150px; height: auto; display: block; margin-bottom: 10px;" />' ).show();
+                    $button.text( 'Change Image' );
+                    $removeImageButton.show();
+                }
+            });
+
+            // Set the selected image if one exists
+            if ( attachmentId ) {
+                var attachment = wp.media.attachment( attachmentId );
+                attachment.fetch().done( function() {
+                    mediaFrame.state().get( 'selection' ).add( [ attachment ] );
+                } );
+            }
+
+            // Open the media frame
+            mediaFrame.open();
+        });
+
+        // Handle image removal
+        $( document ).on( 'click', '.hi-hat-repeater-image-remove-button', function( e ) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var $button = $( this );
+            var $item = $button.closest( '.hi-hat-repeater-item' );
+            var $input = $item.find( '.hi-hat-repeater-image-input' );
+            var $preview = $item.find( '.hi-hat-repeater-image-preview' );
+            var $selectButton = $item.find( '.hi-hat-repeater-image-select-button' );
+
+            $input.val( '' );
+            $preview.hide().find( 'img' ).remove();
+            $selectButton.text( 'Select Image' );
+            $button.hide();
+        } );
+    } );
+
     if ( typeof acf.add_action !== 'undefined' ) {
         acf.add_action( 'ready_field/type=hi_hat_repeater_wysiwyg', initialize_field );
         acf.add_action( 'append_field/type=hi_hat_repeater_wysiwyg', initialize_field );
         acf.add_action( 'ready_field/type=hi_hat_repeater_textarea', initialize_field );
         acf.add_action( 'append_field/type=hi_hat_repeater_textarea', initialize_field );
+        acf.add_action( 'ready_field/type=hi_hat_repeater_image', initialize_field );
+        acf.add_action( 'append_field/type=hi_hat_repeater_image', initialize_field );
     }
 })( jQuery );

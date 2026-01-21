@@ -44,3 +44,27 @@
 	margin-top: 28px;
 	align-self: flex-start;
 }
+
+/* Image field styles */
+.hi-hat-repeater-image-wrapper {
+	margin-bottom: 10px;
+}
+
+.hi-hat-repeater-image-preview {
+	margin-bottom: 10px;
+}
+
+.hi-hat-repeater-image-preview img {
+	max-width: 150px;
+	height: auto;
+	display: block;
+	margin-bottom: 10px;
+	border: 1px solid #ddd;
+	padding: 4px;
+	background: #fff;
+}
+
+.hi-hat-repeater-image-select-button,
+.hi-hat-repeater-image-remove-button {
+	margin-right: 5px;
+}
