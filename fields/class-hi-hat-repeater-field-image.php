@@ -28,7 +28,11 @@ class Hi_Hat_Repeater_Field_Image extends Hi_Hat_Repeater_Field_Base {
 		// Ensure media library scripts are enqueued
 		wp_enqueue_media();
 
-		$values = is_array( $field['value'] ) ? $field['value'] : array( '' );
+		$values = is_array( $field['value'] ) ? $field['value'] : array();
+		// Always ensure at least one empty item exists
+		if ( empty( $values ) ) {
+			$values = array( '' );
+		}
 		$data_attrs = sprintf(
 			' data-name="%s" data-field-type="image"',
 			esc_attr( $field['name'] )

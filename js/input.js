@@ -106,11 +106,23 @@
             if ( fieldType === 'image' ) {
                 var $existingItem = $wrapper.find( '.hi-hat-repeater-item' ).first();
                 var $newItem;
+                var timestamp = Date.now();
+                var newInputId = 'hi_hat_image_' + fieldSlug + '_' + timestamp;
+                
+                // Get the field name from an existing input or from the data attribute
+                var fieldNameAttr = fieldName;
+                var $existingInput = $wrapper.find( '.hi-hat-repeater-image-input' ).first();
+                if ( $existingInput.length ) {
+                    // Extract field name from existing input's name attribute (remove the [])
+                    var existingName = $existingInput.attr( 'name' );
+                    if ( existingName ) {
+                        fieldNameAttr = existingName.replace( /\[\]$/, '' );
+                    }
+                }
                 
                 if ( $existingItem.length ) {
+                    // Clone existing item
                     $newItem = $existingItem.clone();
-                    var timestamp = Date.now();
-                    var newInputId = 'hi_hat_image_' + fieldName + '_' + timestamp;
                     
                     // Clear the image data
                     var $input = $newItem.find( '.hi-hat-repeater-image-input' );
@@ -128,8 +140,37 @@
                     var $removeImageButton = $newItem.find( '.hi-hat-repeater-image-remove-button' );
                     $removeImageButton.hide();
                 } else {
-                    console.error( 'No existing image item to clone' );
-                    return;
+                    // Create new item from scratch using jQuery for safety
+                    $newItem = $( '<div class="hi-hat-repeater-item"></div>' );
+                    var $wrapperDiv = $( '<div class="hi-hat-repeater-image-wrapper"></div>' );
+                    var $input = $( '<input>', {
+                        type: 'hidden',
+                        class: 'hi-hat-repeater-image-input',
+                        name: fieldNameAttr + '[]',
+                        value: '',
+                        id: newInputId
+                    } );
+                    var $preview = $( '<div class="hi-hat-repeater-image-preview" style="display:none;"></div>' );
+                    var $selectButton = $( '<button>', {
+                        type: 'button',
+                        class: 'button hi-hat-repeater-image-select-button',
+                        text: 'Select Image'
+                    } );
+                    var $removeImageButton = $( '<button>', {
+                        type: 'button',
+                        class: 'button hi-hat-repeater-image-remove-button',
+                        style: 'display:none;',
+                        text: 'Remove Image'
+                    } );
+                    var $removeButton = $( '<a>', {
+                        href: '#',
+                        class: 'hi-hat-repeater-remove-button button button-small',
+                        style: 'margin-top:14px',
+                        text: 'Remove'
+                    } );
+                    
+                    $wrapperDiv.append( $input, $preview, $selectButton, $removeImageButton );
+                    $newItem.append( $wrapperDiv, $removeButton );
                 }
                 
                 $wrapper.append( $newItem );
