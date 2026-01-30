@@ -5,16 +5,6 @@
 abstract class Hi_Hat_Repeater_Field_Base extends acf_field {
 
 	/**
-	 * Enqueue scripts and styles.
-	 */
-	public function input_admin_enqueue_scripts() {
-		$version = '1.0.0';
-
-		wp_enqueue_script( 'hi-hat-repeater', HI_HAT_REPEATER_URL . 'js/input.js', array( 'jquery', 'media-upload', 'media-views' ), $version, true );
-		wp_enqueue_style( 'hi-hat-repeater', HI_HAT_REPEATER_URL . 'css/input.css', array(), $version );
-	}
-
-	/**
 	 * Update the field value.
 	 *
 	 * @param mixed $value   The value to be updated.
