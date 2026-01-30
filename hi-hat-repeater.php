@@ -21,14 +21,62 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-// Temporarily disable the entire plugin to fix editor issues
-return;
+// Check if ACF is active.
+if (! class_exists('acf')) {
+	return;
+}
 
 
 
 // Define constants.
-define('HI_HAT_REPEATER_URL', plugin_dir_url(__FILE__));
-define('HI_HAT_REPEATER_PATH', plugin_dir_path(__FILE__));
+if (!defined('HI_HAT_REPEATER_URL')) {
+	define('HI_HAT_REPEATER_URL', plugin_dir_url(__FILE__));
+}
+if (!defined('HI_HAT_REPEATER_PATH')) {
+	define('HI_HAT_REPEATER_PATH', plugin_dir_path(__FILE__));
+}
+
+// Register GraphQL support for WPGraphQL ACF as early as possible
+add_action('wpgraphql/acf/init', function () {
+	if (function_exists('register_graphql_acf_field_type')) {
+		register_graphql_acf_field_type('hi_hat_repeater_textarea', [
+			'graphql_type' => ['list_of' => 'String']
+		]);
+		register_graphql_acf_field_type('hi_hat_repeater_image', [
+			'graphql_type' => ['list_of' => 'MediaItem']
+		]);
+		// Register the hi_hat_repeater_group field type
+		// This behaves like ACF's repeater with sub_fields
+		register_graphql_acf_field_type('hi_hat_repeater_group', [
+			'graphql_type' => function ($field_config, $acf_field_type) {
+				$sub_field_group = $field_config->get_acf_field();
+				$parent_type     = $field_config->get_parent_graphql_type_name($sub_field_group);
+				$field_name      = $field_config->get_graphql_field_name();
+
+				// Use WPGraphQL's Utils class if available, otherwise format manually
+				if (class_exists('\WPGraphQL\Utils\Utils')) {
+					$type_name = \WPGraphQL\Utils\Utils::format_type_name($parent_type . ' ' . $field_name);
+				} else {
+					// Fallback: simple format conversion
+					$type_name = ucfirst($parent_type) . ucfirst($field_name);
+				}
+
+				$sub_field_group['graphql_type_name']  = $type_name;
+				$sub_field_group['graphql_field_name'] = $type_name;
+				$sub_field_group['locations']          = null;
+
+				// Register the sub fields as a GraphQL type
+				$field_config->get_registry()->register_acf_field_groups_to_graphql(
+					[$sub_field_group]
+				);
+
+				return ['list_of' => $type_name];
+			}
+		]);
+	}
+});
+
+
 
 // Register GraphQL support for WPGraphQL ACF as early as possible
 add_action('wpgraphql/acf/init', function () {
@@ -174,7 +222,12 @@ add_action('acf/include_field_types', 'include_field_types_hi_hat_repeater');
  */
 function enqueue_hi_hat_repeater_admin_styles()
 {
-	// Disabled - CSS and JS no longer needed since WYSIWYG field has been removed
+	wp_enqueue_style(
+		'hi-hat-repeater-admin',
+		HI_HAT_REPEATER_URL . 'css/hi-hat-repeater-admin.css',
+		array(),
+		'1.0.0'
+	);
 }
 
 add_action('admin_enqueue_scripts', 'enqueue_hi_hat_repeater_admin_styles');

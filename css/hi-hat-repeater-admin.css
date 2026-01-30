@@ -1,5 +1,11 @@
 /* Hi-Hat Repeater Admin Styles */
 
+/* Only target hi-hat-repeater specific elements */
+.acf-hi-hat-repeater .wp-editor-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Ensure text color is black for all ACF fields */
 .acf-field {
   color: #000;

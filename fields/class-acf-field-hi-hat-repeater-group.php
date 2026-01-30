@@ -250,7 +250,7 @@ if (! class_exists('acf_field_hi_hat_repeater_group')) :
 
                 <?php if ($show_order): ?>
                     <td class="acf-row-handle order" title="<?php _e('Drag to reorder', 'acf'); ?>">
-                        <span><?php echo $i + 1; ?></span>
+                        <span><?php echo $i === 'acfcloneindex' ? '' : ($i + 1); ?></span>
                     </td>
                 <?php endif; ?>
 
