@@ -2,7 +2,7 @@
 
 /* Ensure text color is black for all ACF fields */
 .acf-field {
-	color: #000;
+  color: #000;
 }
 
 .acf-field input,
@@ -11,20 +11,20 @@
 .acf-field label,
 .acf-field .acf-label,
 .acf-field .acf-th {
-	color: #000 !important;
+  color: #000 !important;
 }
 
 .acf-field table.acf-table thead th {
-	color: #000;
+  color: #000;
 }
 
 .acf-field table.acf-table tbody td {
-	color: #000;
+  color: #000;
 }
 
 /* Ensure placeholder text is readable */
 .acf-field input::placeholder,
 .acf-field textarea::placeholder {
-	color: #666 !important;
-	opacity: 1;
+  color: #666 !important;
+  opacity: 1;
 }

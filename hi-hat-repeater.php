@@ -21,10 +21,8 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-// Check if ACF is active.
-if (! class_exists('acf')) {
-	return;
-}
+// Temporarily disable the entire plugin to fix editor issues
+return;
 
 
 
@@ -35,9 +33,6 @@ define('HI_HAT_REPEATER_PATH', plugin_dir_path(__FILE__));
 // Register GraphQL support for WPGraphQL ACF as early as possible
 add_action('wpgraphql/acf/init', function () {
 	if (function_exists('register_graphql_acf_field_type')) {
-		register_graphql_acf_field_type('hi_hat_repeater_wysiwyg', [
-			'graphql_type' => ['list_of' => 'String']
-		]);
 		register_graphql_acf_field_type('hi_hat_repeater_textarea', [
 			'graphql_type' => ['list_of' => 'String']
 		]);
@@ -78,7 +73,7 @@ add_action('wpgraphql/acf/init', function () {
 // Handle field value resolution using the standard WPGraphQL ACF filter
 add_filter('wpgraphql/acf/field_value', function ($value, $field_config, $root, $node_id) {
 	if (isset($field_config['type'])) {
-		if ($field_config['type'] === 'hi_hat_repeater_wysiwyg' || $field_config['type'] === 'hi_hat_repeater_textarea') {
+		if ($field_config['type'] === 'hi_hat_repeater_textarea') {
 			// Get the raw field value from ACF using the field name
 			$raw_value = get_field($field_config['name'], $node_id, false);
 			if (is_array($raw_value)) {
@@ -146,7 +141,7 @@ add_filter('wpgraphql/acf/should_field_group_show_in_graphql', function ($should
 	// Force field groups to show in GraphQL if they contain hi-hat repeater fields
 	if (isset($acf_field_group['fields']) && is_array($acf_field_group['fields'])) {
 		foreach ($acf_field_group['fields'] as $field) {
-			if (isset($field['type']) && ($field['type'] === 'hi_hat_repeater_wysiwyg' || $field['type'] === 'hi_hat_repeater_textarea' || $field['type'] === 'hi_hat_repeater_image')) {
+			if (isset($field['type']) && ($field['type'] === 'hi_hat_repeater_textarea' || $field['type'] === 'hi_hat_repeater_image')) {
 				return true;
 			}
 		}
@@ -162,14 +157,12 @@ add_filter('wpgraphql/acf/should_field_group_show_in_graphql', function ($should
 function include_field_types_hi_hat_repeater($version)
 {
 	include_once 'fields/class-hi-hat-repeater-field-base.php';
-	include_once 'fields/class-hi-hat-repeater-field-wysiwyg.php';
 	include_once 'fields/class-hi-hat-repeater-field-textarea.php';
 	include_once 'fields/class-hi-hat-repeater-field-image.php';
 	// include_once 'fields/class-hi-hat-repeater-field-group.php';
 	include_once 'fields/class-acf-field-hi-hat-repeater-group.php';
 
 	// Register the field types with ACF
-	acf_register_field_type(new Hi_Hat_Repeater_Field_Wysiwyg());
 	acf_register_field_type(new Hi_Hat_Repeater_Field_Textarea());
 	acf_register_field_type(new Hi_Hat_Repeater_Field_Image());
 	// acf_register_field_type( new Hi_Hat_Repeater_Field_Group() );
@@ -181,12 +174,7 @@ add_action('acf/include_field_types', 'include_field_types_hi_hat_repeater');
  */
 function enqueue_hi_hat_repeater_admin_styles()
 {
-	wp_enqueue_style(
-		'hi-hat-repeater-admin',
-		HI_HAT_REPEATER_URL . 'css/hi-hat-repeater-admin.css',
-		array(),
-		'1.0.0'
-	);
+	// Disabled - CSS and JS no longer needed since WYSIWYG field has been removed
 }
 
 add_action('admin_enqueue_scripts', 'enqueue_hi_hat_repeater_admin_styles');
