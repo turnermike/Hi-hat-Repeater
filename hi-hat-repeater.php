@@ -176,3 +176,17 @@ function include_field_types_hi_hat_repeater($version)
 }
 
 add_action('acf/include_field_types', 'include_field_types_hi_hat_repeater');
+/**
+ * Enqueue admin styles for the hi-hat repeater field.
+ */
+function enqueue_hi_hat_repeater_admin_styles()
+{
+	wp_enqueue_style(
+		'hi-hat-repeater-admin',
+		HI_HAT_REPEATER_URL . 'css/hi-hat-repeater-admin.css',
+		array(),
+		'1.0.0'
+	);
+}
+
+add_action('admin_enqueue_scripts', 'enqueue_hi_hat_repeater_admin_styles');

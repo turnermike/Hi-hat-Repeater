@@ -179,8 +179,8 @@ if (! class_exists('acf_field_hi_hat_repeater_group')) :
 
 								?>
 									<th <?php acf_esc_attr_e($atts); ?>>
-										<?php acf_the_field_label($sub_field); ?>
-										<?php acf_the_field_instructions($sub_field); ?>
+										<?php acf_render_field_label($sub_field); ?>
+										<?php acf_render_field_instructions($sub_field); ?>
 									</th>
 								<?php endforeach; ?>
 
@@ -297,26 +297,24 @@ if (! class_exists('acf_field_hi_hat_repeater_group')) :
 
 			// vars
 			$args = array(
-				'fields'	=> $field['sub_fields'],
-				'parent'	=> $field['ID']
+				'fields'	 => $field['sub_fields'],
+				'parent'	 => $field['ID'],
+				'is_subfield' => true,
 			);
 
 		?>
-			<tr class="acf-field acf-field-setting-sub_fields" data-setting="repeater" data-name="sub_fields">
-				<td class="acf-label">
-					<label><?php _e("Sub Fields", 'acf'); ?></label>
-					<p class="description"></p>
-				</td>
-				<td class="acf-input">
-
+			<div class="acf-field acf-field-setting-sub_fields" data-setting="<?php echo esc_attr($this->name); ?>" data-name="sub_fields">
+				<div class="acf-label">
+					<label><?php esc_html_e('Sub Fields', 'acf'); ?></label>
+				</div>
+				<div class="acf-input acf-input-sub">
 					<?php
 
-					acf_get_view('field-group-fields', $args);
+					acf_get_view('acf-field-group/fields', $args);
 
 					?>
-
-				</td>
-			</tr>
+				</div>
+			</div>
 <?php
 
 
