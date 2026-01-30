@@ -712,17 +712,22 @@ if (! class_exists('acf_field_hi_hat_repeater_group')) :
 				return $field;
 			}
 
-			// normalize parent to array
+			// normalize parent to array without triggering validation
 			$parent = $field['parent'];
 			if (!is_array($parent)) {
-				$parent = acf_get_field($parent);
+				if (function_exists('acf_is_local_field') && acf_is_local_field($parent)) {
+					$parent = acf_get_local_field($parent);
+				} else {
+					$parent = acf_get_raw_field($parent);
+				}
 			}
 			if (empty($parent) || !is_array($parent)) {
+
 				return $field;
 			}
 
-			// bail ealry if not repeater
-			if (acf_get_field_type_prop($parent['type'], 'name') !== 'repeater') {
+			// bail ealry if not hi-hat repeater
+			if (empty($parent['type']) || $parent['type'] !== $this->name) {
 
 				return $field;
 			}
