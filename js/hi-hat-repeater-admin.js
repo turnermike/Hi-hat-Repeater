@@ -17,34 +17,34 @@
 
   function reindexRows($repeater) {
     var fieldName = $repeater.data('field-name') || $repeater.find('tbody tr.acf-row').first().find('input, textarea, select').first().attr('name');
-    
+
     if (fieldName) {
       // Extract base field name (everything before the first [)
       var baseFieldName = fieldName.split('[')[0];
-      
+
       $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function (newIndex) {
         var $row = $(this);
         $row.attr('data-id', newIndex);
-        
+
         // Update all input names and IDs in this row
         $row.find('input, textarea, select').each(function () {
           var $field = $(this);
           var name = $field.attr('name');
           var id = $field.attr('id');
-          
+
           if (name) {
             // Replace the row index in the name: field_name[oldIndex] -> field_name[newIndex]
             var newName = name.replace(/\[(\d+)\]/, '[' + newIndex + ']');
             $field.attr('name', newName);
           }
-          
+
           if (id) {
             // Replace the row index in the ID
             var newId = id.replace(/-row-\d+-/, '-row-' + newIndex + '-');
             $field.attr('id', newId);
           }
         });
-        
+
         // Update labels
         $row.find('label').each(function () {
           var $label = $(this);
@@ -69,7 +69,7 @@
     var index = $tbody.find('tr.acf-row').not('.acf-clone').length;
     var html = template.replace(/acfcloneindex/g, index);
     var $row = $(html);
-    
+
     // Remove the acf-clone class so this row is treated as a real row
     $row.removeClass('acf-clone');
     $row.attr('data-id', index);
@@ -111,10 +111,10 @@
     e.preventDefault();
     var $repeater = $(this).closest('.acf-repeater');
     addGroupRow($repeater);
-    
+
     // Log all rows currently in the DOM
     console.log('Rows in DOM after add:');
-    $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function(idx) {
+    $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function (idx) {
       var firstInput = $(this).find('input, textarea, select').first().attr('name');
       console.log('  Row ' + idx + ': ' + firstInput);
     });
