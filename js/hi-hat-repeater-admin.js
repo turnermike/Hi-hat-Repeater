@@ -15,6 +15,49 @@
     $countInput.val(rowCount);
   }
 
+  function reindexRows($repeater) {
+    var fieldName = $repeater.data('field-name') || $repeater.find('tbody tr.acf-row').first().find('input, textarea, select').first().attr('name');
+    
+    if (fieldName) {
+      // Extract base field name (everything before the first [)
+      var baseFieldName = fieldName.split('[')[0];
+      
+      $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function (newIndex) {
+        var $row = $(this);
+        $row.attr('data-id', newIndex);
+        
+        // Update all input names and IDs in this row
+        $row.find('input, textarea, select').each(function () {
+          var $field = $(this);
+          var name = $field.attr('name');
+          var id = $field.attr('id');
+          
+          if (name) {
+            // Replace the row index in the name: field_name[oldIndex] -> field_name[newIndex]
+            var newName = name.replace(/\[(\d+)\]/, '[' + newIndex + ']');
+            $field.attr('name', newName);
+          }
+          
+          if (id) {
+            // Replace the row index in the ID
+            var newId = id.replace(/-row-\d+-/, '-row-' + newIndex + '-');
+            $field.attr('id', newId);
+          }
+        });
+        
+        // Update labels
+        $row.find('label').each(function () {
+          var $label = $(this);
+          var forAttr = $label.attr('for');
+          if (forAttr) {
+            var newFor = forAttr.replace(/-row-\d+-/, '-row-' + newIndex + '-');
+            $label.attr('for', newFor);
+          }
+        });
+      });
+    }
+  }
+
   function addGroupRow($repeater) {
     var $tbody = $repeater.find('tbody');
     var template = $repeater.find('script.acf-clone').html();
@@ -76,7 +119,9 @@
 
     if ($tbody.find('tr.acf-row').not('.acf-clone').length === 0) {
       $repeater.addClass('-empty');
-      addGroupRow($repeater);
+    } else {
+      // Re-index all remaining rows so they're sequential (0, 1, 2...)
+      reindexRows($repeater);
     }
 
     updateGroupRowOrder($repeater);
