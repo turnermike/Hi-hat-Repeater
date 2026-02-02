@@ -69,6 +69,10 @@
     var index = $tbody.find('tr.acf-row').not('.acf-clone').length;
     var html = template.replace(/acfcloneindex/g, index);
     var $row = $(html);
+    
+    // Remove the acf-clone class so this row is treated as a real row
+    $row.removeClass('acf-clone');
+    $row.attr('data-id', index);
 
     $tbody.append($row);
     $repeater.removeClass('-empty');
@@ -107,6 +111,13 @@
     e.preventDefault();
     var $repeater = $(this).closest('.acf-repeater');
     addGroupRow($repeater);
+    
+    // Log all rows currently in the DOM
+    console.log('Rows in DOM after add:');
+    $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function(idx) {
+      var firstInput = $(this).find('input, textarea, select').first().attr('name');
+      console.log('  Row ' + idx + ': ' + firstInput);
+    });
   });
 
   $(document).on('click', '.acf-repeater [data-event="remove-row"]', function (e) {
