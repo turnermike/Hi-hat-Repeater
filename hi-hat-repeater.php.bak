@@ -36,9 +36,6 @@ if (!defined('HI_HAT_REPEATER_PATH')) {
 	define('HI_HAT_REPEATER_PATH', plugin_dir_path(__FILE__));
 }
 
-// Debug POST data
-include_once __DIR__ . "/debug-post.php";
-
 // Register GraphQL support for WPGraphQL ACF as early as possible
 add_action('wpgraphql/acf/init', function () {
 	if (function_exists('register_graphql_acf_field_type')) {

@@ -1,114 +1,153 @@
 (function ($) {
-  // Initialize all WYSIWYG editors in the repeater
-  function initEditors() {
-    var editorSettings = window.tinyMCEPreInit || {};
-    var mceInit = editorSettings.mceInit || {};
-    var qtInit = editorSettings.qtInit || {};
-
-    // Find all textarea elements in the repeater
-    $('.acf-hi-hat-repeater textarea').each(function () {
-      var $textarea = $(this);
-      var editorId = $textarea.attr('id');
-
-      if (!editorId) return;
-
-      // Create TinyMCE settings for this editor if they don't exist
-      if (!mceInit[editorId]) {
-        // Use default settings from acf_content or create new ones
-        var baseSettings = mceInit.acf_content || mceInit.content || {};
-        mceInit[editorId] = $.extend(true, {}, baseSettings, {
-          id: editorId,
-          selector: '#' + editorId,
-          elements: editorId,
-        });
-      }
-
-      // Create Quicktags settings if they don't exist
-      if (!qtInit[editorId]) {
-        var baseQtSettings = qtInit.acf_content || qtInit.content || {};
-        qtInit[editorId] = $.extend(true, {}, baseQtSettings, {
-          id: editorId,
-        });
-      }
-
-      // Initialize the editor
-      if (window.tinymce && !tinymce.get(editorId)) {
-        tinymce.init(mceInit[editorId]);
-      }
-
-      // Initialize Quicktags
-      if (window.quicktags && !window.editorIds) {
-        window.editorIds = {};
-      }
-      if (window.quicktags && !window.editorIds[editorId]) {
-        quicktags(qtInit[editorId]);
-        window.editorIds[editorId] = true;
-      }
-
-      // Setup tab switching
-      setupEditorTabs(editorId);
+  function updateGroupRowOrder($repeater) {
+    $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function (index) {
+      $(this).find('.acf-row-handle.order span').text(index + 1);
     });
   }
 
-  // Setup Visual/HTML tab switching for an editor
-  function setupEditorTabs(editorId) {
-    var $editor = $('#' + editorId);
-    var $wrap = $editor.closest('.wp-editor-wrap');
+  function updateGroupRowCount($repeater) {
+    var $countInput = $repeater.find('> .acf-input > input[type="hidden"]').first();
+    if (!$countInput.length) {
+      return;
+    }
 
-    if (!$wrap.length) return;
+    var rowCount = $repeater.find('tbody tr.acf-row').not('.acf-clone').length;
+    $countInput.val(rowCount);
+  }
 
-    var $visualTab = $wrap.find('.wp-switch-editor.switch-tmce');
-    var $htmlTab = $wrap.find('.wp-switch-editor.switch-html');
+  function addGroupRow($repeater) {
+    var $tbody = $repeater.find('tbody');
+    var template = $repeater.find('script.acf-clone').html();
 
-    // Visual tab click handler
-    $visualTab.off('click.hihat').on('click.hihat', function (e) {
-      e.preventDefault();
+    if (!template) {
+      return;
+    }
 
-      if ($visualTab.hasClass('active')) return;
+    var index = $tbody.find('tr.acf-row').not('.acf-clone').length;
+    var html = template.replace(/acfcloneindex/g, index);
+    var $row = $(html);
 
-      // Save content from textarea to TinyMCE
-      if (window.tinymce && tinymce.get(editorId)) {
-        tinymce.get(editorId).setContent($editor.val(), { format: 'raw' });
-      } else if (window.tinymce && window.tinyMCEPreInit) {
-        // Initialize TinyMCE if not already done
-        tinymce.init(window.tinyMCEPreInit.mceInit[editorId]);
-      }
+    $tbody.append($row);
+    $repeater.removeClass('-empty');
+    updateGroupRowOrder($repeater);
+    updateGroupRowCount($repeater);
 
-      $wrap.removeClass('html-active').addClass('tmce-active');
-      $visualTab.addClass('active');
-      $htmlTab.removeClass('active');
-      $editor.hide();
-    });
+    if (window.acf && typeof acf.doAction === 'function') {
+      acf.doAction('append', $row);
+    }
 
-    // HTML tab click handler
-    $htmlTab.off('click.hihat').on('click.hihat', function (e) {
-      e.preventDefault();
+    if (window.acf && typeof acf.getFields === 'function') {
+      $row.find('.acf-field').each(function () {
+        acf.getField($(this));
+      });
+    }
+  }
 
-      if ($htmlTab.hasClass('active')) return;
+  function resetRepeaterItem($item) {
+    $item.find('textarea').val('');
+    $item.find('input[type="hidden"]').val('');
+    $item.find('[id]').removeAttr('id');
+    $item.find('.hi-hat-repeater-image-preview').hide().find('img').remove();
+    $item.find('.hi-hat-repeater-image-remove-button').hide();
+    $item.find('.hi-hat-repeater-image-select-button').text('Select Image');
+  }
 
-      // Get content from TinyMCE and put it in textarea
-      if (window.tinymce && tinymce.get(editorId)) {
-        tinymce.get(editorId).save();
-      }
-
-      $wrap.removeClass('tmce-active').addClass('html-active');
-      $htmlTab.addClass('active');
-      $visualTab.removeClass('active');
-      $editor.show();
+  function getMediaFrame() {
+    return wp.media({
+      title: 'Select Image',
+      button: { text: 'Use image' },
+      multiple: false,
     });
   }
 
-  // Initialize on document ready
-  $(document).ready(function () {
-    setTimeout(function () {
-      initEditors();
-    }, 200);
+  $(document).on('click', '.acf-repeater [data-event="add-row"]', function (e) {
+    e.preventDefault();
+    var $repeater = $(this).closest('.acf-repeater');
+    addGroupRow($repeater);
   });
 
-  // Re-initialize when items are added to the repeater
-  $(document).on('click', '.hi-hat-repeater-add-button', function () {
-    setTimeout(function () {
-      initEditors();
-    }, 300);
+  $(document).on('click', '.acf-repeater [data-event="remove-row"]', function (e) {
+    e.preventDefault();
+    var $repeater = $(this).closest('.acf-repeater');
+    var $row = $(this).closest('tr');
+    var $tbody = $repeater.find('tbody');
+
+    $row.remove();
+
+    if ($tbody.find('tr.acf-row').not('.acf-clone').length === 0) {
+      $repeater.addClass('-empty');
+      addGroupRow($repeater);
+    }
+
+    updateGroupRowOrder($repeater);
+    updateGroupRowCount($repeater);
+  });
+
+  $(document).on('click', '.acf-hi-hat-repeater .hi-hat-repeater-add-button', function (e) {
+    e.preventDefault();
+    var $repeater = $(this).closest('.acf-hi-hat-repeater');
+    var $itemsWrap = $repeater.find('.hi-hat-repeater-items-wrap');
+    var $lastItem = $itemsWrap.find('.hi-hat-repeater-item').last();
+    var $newItem = $lastItem.clone(false, false);
+    resetRepeaterItem($newItem);
+    $itemsWrap.append($newItem);
+  });
+
+  $(document).on('click', '.acf-hi-hat-repeater .hi-hat-repeater-remove-button', function (e) {
+    e.preventDefault();
+    var $repeater = $(this).closest('.acf-hi-hat-repeater');
+    var $items = $repeater.find('.hi-hat-repeater-item');
+    var $item = $(this).closest('.hi-hat-repeater-item');
+
+    if ($items.length <= 1) {
+      resetRepeaterItem($item);
+      return;
+    }
+
+    $item.remove();
+  });
+
+  $(document).on('click', '.acf-hi-hat-repeater .hi-hat-repeater-image-select-button', function (e) {
+    e.preventDefault();
+
+    if (!window.wp || !wp.media) {
+      return;
+    }
+
+    var $item = $(this).closest('.hi-hat-repeater-item');
+    var $input = $item.find('.hi-hat-repeater-image-input');
+    var $preview = $item.find('.hi-hat-repeater-image-preview');
+    var $removeButton = $item.find('.hi-hat-repeater-image-remove-button');
+    var $selectButton = $(this);
+
+    var frame = getMediaFrame();
+    frame.on('select', function () {
+      var attachment = frame.state().get('selection').first().toJSON();
+      if (!attachment || !attachment.id) {
+        return;
+      }
+
+      $input.val(attachment.id);
+      var previewUrl = attachment.sizes && attachment.sizes.thumbnail ? attachment.sizes.thumbnail.url : attachment.url;
+      $preview.html('<img src="' + previewUrl + '" alt="" style="max-width: 150px; height: auto; display: block; margin-bottom: 10px;" />');
+      $preview.show();
+      $removeButton.show();
+      $selectButton.text('Change Image');
+    });
+
+    frame.open();
+  });
+
+  $(document).on('click', '.acf-hi-hat-repeater .hi-hat-repeater-image-remove-button', function (e) {
+    e.preventDefault();
+    var $item = $(this).closest('.hi-hat-repeater-item');
+    var $input = $item.find('.hi-hat-repeater-image-input');
+    var $preview = $item.find('.hi-hat-repeater-image-preview');
+    var $selectButton = $item.find('.hi-hat-repeater-image-select-button');
+
+    $input.val('');
+    $preview.hide().find('img').remove();
+    $(this).hide();
+    $selectButton.text('Select Image');
   });
 })(jQuery);
