@@ -293,6 +293,26 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
             // Remove clone row
             unset($value['acfcloneindex']);
+            
+            // Handle empty array (all rows deleted)
+            if (empty($value)) {
+                error_log('HI-HAT REPEATER update_value - Array is empty, deleting all rows');
+                $old_value = get_post_meta($post_id, $field['name'], true);
+                $old_value = is_numeric($old_value) ? intval($old_value) : 0;
+                
+                // Delete all old rows
+                for ($i = 0; $i < $old_value; $i++) {
+                    foreach ($field['sub_fields'] as $sub_field) {
+                        $sub_field['name'] = $field['name'] . '_' . $i . '_' . $sub_field['_name'];
+                        acf_delete_value($post_id, $sub_field);
+                    }
+                }
+                
+                // Delete the count meta too
+                delete_post_meta($post_id, $field['name']);
+                error_log('HI-HAT REPEATER update_value - Deleted all ' . $old_value . ' rows');
+                return 0;
+            }
 
             // Get old value
             $old_value = get_post_meta($post_id, $field['name'], true);

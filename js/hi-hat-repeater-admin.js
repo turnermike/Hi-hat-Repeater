@@ -119,6 +119,8 @@
 
     if ($tbody.find('tr.acf-row').not('.acf-clone').length === 0) {
       $repeater.addClass('-empty');
+      // Add a fresh empty row when all rows are deleted
+      addGroupRow($repeater);
     } else {
       // Re-index all remaining rows so they're sequential (0, 1, 2...)
       reindexRows($repeater);
