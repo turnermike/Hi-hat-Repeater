@@ -424,6 +424,4 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
         }
     }
 
-    new acf_field_hi_hat_repeater_group();
-
 endif;
