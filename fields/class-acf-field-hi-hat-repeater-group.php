@@ -173,13 +173,13 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
         function render_field_settings($field)
         {
+            // Render the Sub Fields section
             $args = array(
-                'fields' => $field['sub_fields'],
+                'fields' => isset($field['sub_fields']) ? $field['sub_fields'] : array(),
                 'parent' => $field['ID'],
-                'is_subfield' => true,
             );
         ?>
-            <div class="acf-field acf-field-setting-sub_fields" data-setting="<?php echo esc_attr($this->name); ?>" data-name="sub_fields">
+            <div class="acf-field acf-field-setting-sub_fields" data-setting="sub_fields" data-name="sub_fields">
                 <div class="acf-label">
                     <label><?php esc_html_e('Sub Fields', 'acf'); ?></label>
                 </div>

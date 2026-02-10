@@ -41,6 +41,7 @@
           if (id) {
             // Replace the row index in the ID
             var newId = id.replace(/-row-\d+-/, '-row-' + newIndex + '-');
+            newId = newId.replace(/-(\d+)-field_/, '-' + newIndex + '-field_');
             $field.attr('id', newId);
           }
         });
@@ -51,6 +52,7 @@
           var forAttr = $label.attr('for');
           if (forAttr) {
             var newFor = forAttr.replace(/-row-\d+-/, '-row-' + newIndex + '-');
+            newFor = newFor.replace(/-(\d+)-field_/, '-' + newIndex + '-field_');
             $label.attr('for', newFor);
           }
         });
@@ -58,9 +60,35 @@
     }
   }
 
+  function getRowTemplate($repeater) {
+    var cached = $repeater.data('hiHatRowTemplate');
+    if (cached) {
+      return cached;
+    }
+
+    var template = '';
+    var $script = $repeater.find('script.acf-clone').first();
+    if ($script.length) {
+      template = $script.html();
+    }
+
+    if (!template) {
+      var $cloneRow = $repeater.find('tbody tr.acf-row.acf-clone').first();
+      if ($cloneRow.length) {
+        template = $cloneRow.prop('outerHTML');
+      }
+    }
+
+    if (template) {
+      $repeater.data('hiHatRowTemplate', template);
+    }
+
+    return template;
+  }
+
   function addGroupRow($repeater) {
     var $tbody = $repeater.find('tbody');
-    var template = $repeater.find('script.acf-clone').html();
+    var template = getRowTemplate($repeater);
 
     if (!template) {
       return;
@@ -111,13 +139,6 @@
     e.preventDefault();
     var $repeater = $(this).closest('.acf-repeater');
     addGroupRow($repeater);
-
-    // Log all rows currently in the DOM
-    console.log('Rows in DOM after add:');
-    $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function (idx) {
-      var firstInput = $(this).find('input, textarea, select').first().attr('name');
-      console.log('  Row ' + idx + ': ' + firstInput);
-    });
   });
 
   $(document).on('click', '.acf-repeater [data-event="remove-row"]', function (e) {
