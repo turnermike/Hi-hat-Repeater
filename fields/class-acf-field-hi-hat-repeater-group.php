@@ -37,12 +37,9 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
             $field_key = $field['key'] . '_' . (isset($_GET['post']) ? $_GET['post'] : '');
 
             if (isset($rendered_fields[$field_key])) {
-                error_log('HI-HAT REPEATER: Duplicate render detected for ' . $field['name'] . ' - skipping');
                 return;
             }
             $rendered_fields[$field_key] = true;
-
-            error_log('HI-HAT REPEATER render_field called for: ' . $field['name'] . ' with value count: ' . (is_array($field['value']) ? count($field['value']) : 'not array'));
 
             $sub_fields = $field['sub_fields'];
             $show_order = true;
@@ -229,24 +226,17 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
         function load_value($value, $post_id, $field)
         {
-            error_log('HI-HAT REPEATER load_value called - Field: ' . $field['name'] . ', Post ID: ' . $post_id);
-            error_log('HI-HAT REPEATER load_value - Value: ' . print_r($value, true));
-
             // If value is already an array (already loaded), return it as-is
             if (is_array($value)) {
-                error_log('HI-HAT REPEATER load_value - Value already an array, returning as-is');
                 return $value;
             }
 
             if (empty($value) || !is_numeric($value)) {
-                error_log('HI-HAT REPEATER load_value - Value empty or not numeric, returning empty array');
                 return array();
             }
 
             $value = intval($value);
             $rows = array();
-
-            error_log('HI-HAT REPEATER load_value - Loading ' . $value . ' rows');
 
             for ($i = 0; $i < $value; $i++) {
                 $row = array();
@@ -255,47 +245,28 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
                     foreach ($field['sub_fields'] as $sub_field) {
                         $sub_field['name'] = $field['name'] . '_' . $i . '_' . $sub_field['_name'];
                         $row[$sub_field['key']] = acf_get_value($post_id, $sub_field);
-                        error_log('HI-HAT REPEATER load_value - Row ' . $i . ' field ' . $sub_field['name'] . ' = ' . $row[$sub_field['key']]);
                     }
                 }
 
                 $rows[] = $row;
             }
-
-            error_log('HI-HAT REPEATER load_value - Returning ' . count($rows) . ' rows');
             return $rows;
         }
 
         function update_value($value, $post_id, $field)
         {
-            error_log('HI-HAT REPEATER update_value called - Field: ' . $field['name'] . ', Post ID: ' . $post_id);
-            error_log('HI-HAT REPEATER update_value - Value type: ' . gettype($value));
-            error_log('HI-HAT REPEATER update_value - Full Value dump:');
-            error_log(print_r($value, true));
-
-            // Count the actual structure
-            if (is_array($value)) {
-                error_log('HI-HAT REPEATER - Array has ' . count($value) . ' items');
-                foreach ($value as $key => $item) {
-                    error_log('  Key ' . $key . ' (type: ' . gettype($item) . '): ' . (is_array($item) ? 'array with ' . count($item) . ' items' : $item));
-                }
-            }
-
             // If value is numeric (row count from previous save), return it as-is
             if (is_numeric($value) && !is_array($value)) {
-                error_log('HI-HAT REPEATER update_value - Value is row count, returning as-is');
                 return $value;
             }
 
             // If value is null or empty (ACF re-calling after null return), get stored row count
             if ($value === null || $value === '') {
-                error_log('HI-HAT REPEATER update_value - Value is null/empty, returning stored row count');
                 $stored_count = get_post_meta($post_id, $field['name'], true);
                 return $stored_count ? $stored_count : 0;
             }
 
             if (!is_array($value) || empty($field['sub_fields'])) {
-                error_log('HI-HAT REPEATER update_value - Not array or no sub_fields, deleting');
                 delete_post_meta($post_id, $field['name']);
                 return 0;
             }
@@ -305,7 +276,6 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
             // Handle empty array (all rows deleted)
             if (empty($value)) {
-                error_log('HI-HAT REPEATER update_value - Array is empty, deleting all rows');
                 $old_value = get_post_meta($post_id, $field['name'], true);
                 $old_value = is_numeric($old_value) ? intval($old_value) : 0;
 
@@ -319,7 +289,6 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
                 // Delete the count meta too
                 delete_post_meta($post_id, $field['name']);
-                error_log('HI-HAT REPEATER update_value - Deleted all ' . $old_value . ' rows');
                 return 0;
             }
 
@@ -331,25 +300,16 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
             $new_value = 0;
             $value = array_values($value); // Re-index to ensure 0, 1, 2, 3...
 
-            error_log('HI-HAT REPEATER - After array_values, array has ' . count($value) . ' items');
-            error_log('HI-HAT REPEATER - Value structure: ' . json_encode($value));
-
             foreach ($value as $i => $row) {
-                error_log('HI-HAT REPEATER - Processing row ' . $i . ', type: ' . gettype($row));
-
                 if (!is_array($row)) {
-                    error_log('HI-HAT REPEATER - Row ' . $i . ' is not an array, value: ' . var_export($row, true));
                     continue;
                 }
 
                 $i = intval($i);
-                error_log('HI-HAT REPEATER - Saving row ' . $i . ': ' . json_encode($row));
 
                 foreach ($field['sub_fields'] as $sub_field) {
                     $sub_field_key = $sub_field['key'];
                     $sub_value = isset($row[$sub_field_key]) ? $row[$sub_field_key] : '';
-
-                    error_log('HI-HAT REPEATER - Row ' . $i . ' sub-field ' . $sub_field['_name'] . ' (key: ' . $sub_field_key . ') = ' . $sub_value);
 
                     $sub_field['name'] = $field['name'] . '_' . $i . '_' . $sub_field['_name'];
                     acf_update_value($sub_value, $post_id, $sub_field);
@@ -357,8 +317,6 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
                 $new_value = $i + 1;
             }
-
-            error_log('HI-HAT REPEATER - Total rows saved: ' . $new_value);
 
             // Delete old rows
             if ($old_value > $new_value) {
@@ -369,8 +327,6 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
                     }
                 }
             }
-
-            error_log('HI-HAT REPEATER update_value - Saved ' . $new_value . ' rows, returning count');
 
             // Return row count - ACF will store this in the main field meta
             return $new_value;

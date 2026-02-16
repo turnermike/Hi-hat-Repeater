@@ -36,8 +36,6 @@ if (!defined('HI_HAT_REPEATER_PATH')) {
 	define('HI_HAT_REPEATER_PATH', plugin_dir_path(__FILE__));
 }
 
-// Debug POST data
-include_once __DIR__ . "/debug-post.php";
 
 // Register GraphQL support for WPGraphQL ACF as early as possible
 add_action('wpgraphql/acf/init', function () {
@@ -207,42 +205,24 @@ add_filter('wpgraphql/acf/should_field_group_show_in_graphql', function ($should
  */
 function include_field_types_hi_hat_repeater($version)
 {
-	$debug_file = __DIR__ . '/debug.log';
-	file_put_contents($debug_file, date('Y-m-d H:i:s') . " - include_field_types_hi_hat_repeater called\n", FILE_APPEND);
-
-	// Force an admin notice to prove this runs
-	add_action('admin_notices', function () {
-		echo '<div class="notice notice-warning"><p>HI-HAT DEBUG: include_field_types_hi_hat_repeater was called!</p></div>';
-	});
-
 	include_once 'fields/class-hi-hat-repeater-field-base.php';
 	include_once 'fields/class-hi-hat-repeater-field-textarea.php';
 	include_once 'fields/class-hi-hat-repeater-field-image.php';
 	include_once 'fields/class-acf-field-hi-hat-repeater-group.php';
 
-	file_put_contents($debug_file, date('Y-m-d H:i:s') . " - Files included\n", FILE_APPEND);
-
 	// Register the field types with ACF
 	acf_register_field_type(new Hi_Hat_Repeater_Field_Textarea());
-	file_put_contents($debug_file, date('Y-m-d H:i:s') . " - Textarea registered\n", FILE_APPEND);
 
 	acf_register_field_type(new Hi_Hat_Repeater_Field_Image());
-	file_put_contents($debug_file, date('Y-m-d H:i:s') . " - Image registered\n", FILE_APPEND);
 
 	try {
 		$group_field = new acf_field_hi_hat_repeater_group();
 		acf_register_field_type($group_field);
-		file_put_contents($debug_file, date('Y-m-d H:i:s') . " - Group registered successfully\n", FILE_APPEND);
 	} catch (Exception $e) {
-		file_put_contents($debug_file, date('Y-m-d H:i:s') . " - ERROR registering group: " . $e->getMessage() . "\n", FILE_APPEND);
 	}
 }
 
 add_action('acf/include_field_types', 'include_field_types_hi_hat_repeater');
-
-// Debug: log that we got here
-$debug_file = __DIR__ . '/debug.log';
-file_put_contents($debug_file, date('Y-m-d H:i:s') . " - Plugin loaded, action added\n", FILE_APPEND);
 
 /**
  * Enqueue admin styles for the hi-hat repeater field.

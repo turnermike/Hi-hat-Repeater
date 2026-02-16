@@ -26,9 +26,6 @@ if (! class_exists('acf')) {
   return;
 }
 
-// Debug POST data
-include_once __DIR__ . '/debug-post.php';
-
 
 // Define constants.
 if (!defined('HI_HAT_REPEATER_URL')) {
