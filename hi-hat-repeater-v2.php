@@ -1,19 +1,10 @@
 <?php
 
 /**
- * Plugin Name: Hi-Hat Repeater
- * Plugin URI:  https://github.com/yourusername/hi-hat-repeater
- * Description: An Advanced Custom Fields add-on for a repeater-like field with multiple text areas. Includes GraphQL support.
- * Version:     1.2.1
- * Author:      Your Name
- * Author URI:  https://github.com/yourusername
- * License:     GPL-2.0-or-later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: hi-hat-repeater
- * Requires at least: 5.0
- * Tested up to: 6.4
- * Requires PHP: 7.4
- * ACF: 5.0.0
+ * Internal bootstrap file for Hi-Hat Repeater.
+ *
+ * Intentionally not a WordPress plugin header to avoid duplicate plugin
+ * entries when this file exists alongside `hi-hat-repeater.php`.
  */
 
 // Exit if accessed directly.
