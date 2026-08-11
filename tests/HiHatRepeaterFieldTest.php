@@ -56,6 +56,46 @@ class HiHatRepeaterFieldTest extends TestCase {
     }
 
     /**
+     * Test Link field name.
+     */
+    public function test_link_field_name() {
+        $field = new Hi_Hat_Repeater_Field_Link();
+        $this->assertEquals('hi_hat_repeater_link', $field->name);
+    }
+
+    /**
+     * Test Link field label.
+     */
+    public function test_link_field_label() {
+        $field = new Hi_Hat_Repeater_Field_Link();
+        $this->assertEquals(__('Hi-hat Repeater - Link', 'hi-hat-repeater'), $field->label);
+    }
+
+    /**
+     * Test Link field update_value filters invalid rows and preserves valid fields.
+     */
+    public function test_link_update_value_filters_invalid_rows() {
+        $link_field = new Hi_Hat_Repeater_Field_Link();
+        $value = array(
+            array('title' => 'Valid link', 'url' => 'https://example.com', 'target' => '_blank'),
+            array('title' => 'Missing URL', 'url' => '', 'target' => '_self'),
+            array('title' => '', 'url' => 'https://example.org', 'target' => '_self'),
+        );
+
+        $result = $link_field->update_value($value, 1, []);
+
+        $this->assertIsArray($result);
+        $this->assertCount(2, $result);
+        $this->assertEquals('Valid link', $result[0]['title']);
+        $this->assertEquals('https://example.com', $result[0]['url']);
+        $this->assertEquals('_blank', $result[0]['target']);
+
+        $this->assertEquals('', $result[1]['title']);
+        $this->assertEquals('https://example.org', $result[1]['url']);
+        $this->assertEquals('_self', $result[1]['target']);
+    }
+
+    /**
      * Test field category.
      */
     public function test_field_category() {

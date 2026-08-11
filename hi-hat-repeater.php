@@ -7,8 +7,8 @@
  * Version:     1.2.1
  * Author:      Hi-hat Consulting
  * Author URI:  https://www.hi-hatconsulting.com
- * License:     
- * License URI: 
+ * License:
+ * License URI:
  * Text Domain: hi-hat-repeater
  * Requires at least: 5.0
  * Tested up to: 6.4
@@ -22,9 +22,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Check if ACF is active.
-if (! class_exists('acf')) {
-    return;
-}
+// The field registration is deferred until ACF fires its include_field_types action.
 
 
 
@@ -46,47 +44,8 @@ add_action('wpgraphql/acf/init', function () {
         register_graphql_acf_field_type('hi_hat_repeater_image', [
             'graphql_type' => ['list_of' => 'MediaItem']
         ]);
-        // Register the hi_hat_repeater_group field type
-        // This behaves like ACF's repeater with sub_fields
-        register_graphql_acf_field_type('hi_hat_repeater_group', [
-            'graphql_type' => function ($field_config, $acf_field_type) {
-                $sub_field_group = $field_config->get_acf_field();
-                $parent_type     = $field_config->get_parent_graphql_type_name($sub_field_group);
-                $field_name      = $field_config->get_graphql_field_name();
-
-                // Use WPGraphQL's Utils class if available, otherwise format manually
-                if (class_exists('\WPGraphQL\Utils\Utils')) {
-                    $type_name = \WPGraphQL\Utils\Utils::format_type_name($parent_type . ' ' . $field_name);
-                } else {
-                    // Fallback: simple format conversion
-                    $type_name = ucfirst($parent_type) . ucfirst($field_name);
-                }
-
-                $sub_field_group['graphql_type_name']  = $type_name;
-                $sub_field_group['graphql_field_name'] = $type_name;
-                $sub_field_group['locations']          = null;
-
-                // Register the sub fields as a GraphQL type
-                $field_config->get_registry()->register_acf_field_groups_to_graphql(
-                    [$sub_field_group]
-                );
-
-                return ['list_of' => $type_name];
-            }
-        ]);
-    }
-});
-
-
-
-// Register GraphQL support for WPGraphQL ACF as early as possible
-add_action('wpgraphql/acf/init', function () {
-    if (function_exists('register_graphql_acf_field_type')) {
-        register_graphql_acf_field_type('hi_hat_repeater_textarea', [
-            'graphql_type' => ['list_of' => 'String']
-        ]);
-        register_graphql_acf_field_type('hi_hat_repeater_image', [
-            'graphql_type' => ['list_of' => 'MediaItem']
+        register_graphql_acf_field_type('hi_hat_repeater_link', [
+            'graphql_type' => ['list_of' => 'Link']
         ]);
         // Register the hi_hat_repeater_group field type
         // This behaves like ACF's repeater with sub_fields
@@ -118,6 +77,8 @@ add_action('wpgraphql/acf/init', function () {
         ]);
     }
 });
+
+
 
 // Handle field value resolution using the standard WPGraphQL ACF filter
 add_filter('wpgraphql/acf/field_value', function ($value, $field_config, $root, $node_id) {
@@ -180,6 +141,26 @@ add_filter('wpgraphql/acf/field_value', function ($value, $field_config, $root, 
             }
 
             return $result;
+        } elseif ($field_config['type'] === 'hi_hat_repeater_link') {
+            $raw_value = get_field($field_config['name'], $node_id, false);
+            if (! is_array($raw_value)) {
+                return [];
+            }
+
+            $result = array();
+            foreach ($raw_value as $item) {
+                if (! is_array($item)) {
+                    continue;
+                }
+
+                $result[] = array(
+                    'title'  => isset($item['title']) ? sanitize_text_field($item['title']) : '',
+                    'url'    => isset($item['url']) ? esc_url_raw($item['url']) : '',
+                    'target' => isset($item['target']) && $item['target'] === '_blank' ? '_blank' : '_self',
+                );
+            }
+
+            return $result;
         }
     }
     return $value;
@@ -190,7 +171,7 @@ add_filter('wpgraphql/acf/should_field_group_show_in_graphql', function ($should
     // Force field groups to show in GraphQL if they contain hi-hat repeater fields
     if (isset($acf_field_group['fields']) && is_array($acf_field_group['fields'])) {
         foreach ($acf_field_group['fields'] as $field) {
-            if (isset($field['type']) && ($field['type'] === 'hi_hat_repeater_textarea' || $field['type'] === 'hi_hat_repeater_image')) {
+            if (isset($field['type']) && in_array($field['type'], array('hi_hat_repeater_textarea', 'hi_hat_repeater_image', 'hi_hat_repeater_link'), true)) {
                 return true;
             }
         }
@@ -205,15 +186,16 @@ add_filter('wpgraphql/acf/should_field_group_show_in_graphql', function ($should
  */
 function include_field_types_hi_hat_repeater($version)
 {
-    include_once 'fields/class-hi-hat-repeater-field-base.php';
-    include_once 'fields/class-hi-hat-repeater-field-textarea.php';
-    include_once 'fields/class-hi-hat-repeater-field-image.php';
-    include_once 'fields/class-acf-field-hi-hat-repeater-group.php';
+    include_once HI_HAT_REPEATER_PATH . 'fields/class-hi-hat-repeater-field-base.php';
+    include_once HI_HAT_REPEATER_PATH . 'fields/class-hi-hat-repeater-field-textarea.php';
+    include_once HI_HAT_REPEATER_PATH . 'fields/class-hi-hat-repeater-field-image.php';
+    include_once HI_HAT_REPEATER_PATH . 'fields/class-hi-hat-repeater-field-link.php';
+    include_once HI_HAT_REPEATER_PATH . 'fields/class-acf-field-hi-hat-repeater-group.php';
 
     // Register the field types with ACF
     acf_register_field_type(new Hi_Hat_Repeater_Field_Textarea());
-
     acf_register_field_type(new Hi_Hat_Repeater_Field_Image());
+    acf_register_field_type(new Hi_Hat_Repeater_Field_Link());
 
     try {
         $group_field = new acf_field_hi_hat_repeater_group();

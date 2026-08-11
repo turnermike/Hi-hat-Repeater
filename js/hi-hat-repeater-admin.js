@@ -121,6 +121,8 @@
   function resetRepeaterItem($item) {
     $item.find('textarea').val('');
     $item.find('input[type="hidden"]').val('');
+    $item.find('input[type="url"], input[type="text"]').val('');
+    $item.find('select').val('_self');
     $item.find('[id]').removeAttr('id');
     $item.find('.hi-hat-repeater-image-preview').hide().find('img').remove();
     $item.find('.hi-hat-repeater-image-remove-button').hide();
