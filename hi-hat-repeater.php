@@ -5,7 +5,7 @@
  * Plugin URI:  https://github.com/yourusername/hi-hat-repeater
  * Description: An Advanced Custom Fields add-on for a repeater-like field with multiple text areas. Includes GraphQL support.
  * Version:     1.2.1
- * Author:      Your Name
+ * Author:      Hi-hat Consulting
  * Author URI:  https://github.com/yourusername
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html

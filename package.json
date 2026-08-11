@@ -3,7 +3,7 @@
   "version": "1.2.1",
   "description": "An Advanced Custom Fields add-on for a repeater-like field with multiple text areas.",
   "main": "hi-hat-repeater.php",
-  "author": "Your Name <your.email@example.com>",
+  "author": "Hi-hat Consulting <your.email@example.com>",
   "license": "GPL-2.0-or-later",
   "homepage": "https://github.com/yourusername/hi-hat-repeater",
   "repository": {
@@ -91,9 +91,18 @@
     "rules": {
       "no-unused-vars": "warn",
       "no-console": "warn",
-      "indent": ["error", 4],
-      "quotes": ["error", "single"],
-      "semi": ["error", "always"]
+      "indent": [
+        "error",
+        4
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "semi": [
+        "error",
+        "always"
+      ]
     }
   },
   "postcss": {
