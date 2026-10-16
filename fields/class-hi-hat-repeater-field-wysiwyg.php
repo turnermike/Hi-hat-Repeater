@@ -62,20 +62,6 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base
 	private function render_wysiwyg_item($field, $value, $index)
 	{
 		$editor_id = 'hi_hat_editor_' . sanitize_html_class($field['name']) . '_' . $index . '_' . uniqid();
-		echo $this->get_wysiwyg_item_markup($field, $value, $editor_id, $index);
-	}
-
-	/**
-	 * Build the editor markup string so we can reuse it for templates.
-	 *
-	 * @param array  $field     Field settings.
-	 * @param string $value     Current value.
-	 * @param string $editor_id Editor ID to render.
-	 * @return string
-	 */
-	private function get_wysiwyg_item_markup($field, $value, $editor_id, $index)
-	{
-		ob_start();
 		wp_editor($value, $editor_id, array(
 			'textarea_name' => $field['name'] . '[' . $index . ']',
 			'textarea_rows' => 10,
@@ -84,6 +70,5 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base
 			'tinymce'       => true,
 			'quicktags'     => true,
 		));
-		return ob_get_clean();
 	}
 }

@@ -33,12 +33,8 @@ class Hi_Hat_Repeater_Field_Image extends Hi_Hat_Repeater_Field_Base {
 		if ( empty( $values ) ) {
 			$values = array( '' );
 		}
-		$data_attrs = sprintf(
-			' data-name="%s" data-field-type="image"',
-			esc_attr( $field['name'] )
-		);
 		?>
-		<div class="acf-hi-hat-repeater"<?php echo $data_attrs; ?>>
+		<div class="acf-hi-hat-repeater" data-name="<?php echo esc_attr( $field['name'] ); ?>" data-field-type="image">
 			<div class="hi-hat-repeater-items-wrap">
 				<?php foreach ( $values as $i => $value ) : ?>
 					<div class="hi-hat-repeater-item">

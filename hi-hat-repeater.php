@@ -7,11 +7,11 @@
  * Version:     1.3.0
  * Author:      Hi-hat Consulting
  * Author URI:  https://www.hi-hatconsulting.com
- * License:
- * License URI:
+ * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: hi-hat-repeater
  * Requires at least: 5.0
- * Tested up to: 6.4
+ * Tested up to: 7.1
  * Requires PHP: 7.4
  * ACF: 5.0.0
  */
@@ -203,7 +203,7 @@ add_filter('wpgraphql/acf/should_field_group_show_in_graphql', function ($should
  *
  * @param int $version The ACF version.
  */
-function include_field_types_hi_hat_repeater($version)
+function hi_hat_repeater_include_field_types($version)
 {
     include_once 'fields/class-hi-hat-repeater-field-base.php';
     include_once 'fields/class-hi-hat-repeater-field-textarea.php';
@@ -225,12 +225,12 @@ function include_field_types_hi_hat_repeater($version)
     }
 }
 
-add_action('acf/include_field_types', 'include_field_types_hi_hat_repeater');
+add_action('acf/include_field_types', 'hi_hat_repeater_include_field_types');
 
 /**
  * Enqueue admin styles for the hi-hat repeater field.
  */
-function enqueue_hi_hat_repeater_admin_styles()
+function hi_hat_repeater_enqueue_admin_styles()
 {
     wp_enqueue_style(
         'hi-hat-repeater-admin',
@@ -247,4 +247,4 @@ function enqueue_hi_hat_repeater_admin_styles()
     );
 }
 
-add_action('admin_enqueue_scripts', 'enqueue_hi_hat_repeater_admin_styles');
+add_action('admin_enqueue_scripts', 'hi_hat_repeater_enqueue_admin_styles');

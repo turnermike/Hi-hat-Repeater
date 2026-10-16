@@ -1,4 +1,9 @@
 <?php
+
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * Class Hi_Hat_Repeater_Field_Group.
  */
@@ -27,12 +32,12 @@ class Hi_Hat_Repeater_Field_Group extends acf_field {
 
         //'sub_fields' setting
         acf_render_field_setting( $field, array(
-            'label'         => __('Sub Fields','acf'),
+            'label'         => __('Sub Fields','hi-hat-repeater'),
             'instructions'  => '',
             'type'          => 'repeater',
             'name'          => 'sub_fields',
             'layout'        => 'table',
-            'button_label'  => __("Add Field",'acf'),
+            'button_label'  => __("Add Field",'hi-hat-repeater'),
             'sub_fields'    =>  acf_get_field_type('group')->get_meta('sub_fields')
         ));
 
@@ -75,8 +80,8 @@ class Hi_Hat_Repeater_Field_Group extends acf_field {
                             <?php if ( !empty($field['value']) ) : ?>
                                 <?php foreach ( $field['value'] as $i => $row ) : ?>
                                     <tr class="acf-row">
-                                        <td class="acf-row-handle order" title="<?php _e('Drag to reorder', 'acf'); ?>">
-                                            <span><?php echo $i + 1; ?></span>
+                                        <td class="acf-row-handle order" title="<?php esc_attr_e('Drag to reorder', 'hi-hat-repeater'); ?>">
+                                            <span><?php echo esc_html((int) $i + 1); ?></span>
                                         </td>
                                         <?php foreach ( $field['sub_fields'] as $sub_field ) : ?>
                                             <?php
@@ -90,7 +95,7 @@ class Hi_Hat_Repeater_Field_Group extends acf_field {
                                             </td>
                                         <?php endforeach; ?>
                                         <td class="acf-row-handle remove">
-                                            <a href="#" class="acf-button-delete" data-event="remove-row" title="<?php _e('Remove row', 'acf'); ?>"></a>
+                                            <a href="#" class="acf-button-delete" data-event="remove-row" title="<?php esc_attr_e('Remove row', 'hi-hat-repeater'); ?>"></a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -112,7 +117,7 @@ class Hi_Hat_Repeater_Field_Group extends acf_field {
                     </table>
                 </div>
                 <div class="acf-actions">
-                    <a class="acf-button button button-primary" href="#" data-event="add-row"><?php _e('Add Row', 'acf'); ?></a>
+                    <a class="acf-button button button-primary" href="#" data-event="add-row"><?php esc_html_e('Add Row', 'hi-hat-repeater'); ?></a>
                 </div>
             </div>
         </div>
