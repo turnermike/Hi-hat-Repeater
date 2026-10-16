@@ -39,7 +39,6 @@
     "lint:fix": "npm run lint:css:fix && npm run lint:js:fix",
     "lint:css:fix": "stylelint 'css/**/*.css' --fix",
     "lint:js:fix": "eslint 'js/**/*.js' --fix",
-    "test": "npm run lint",
     "clean": "rimraf css/*.min.css js/*.min.js",
     "prebuild": "npm run clean",
     "postinstall": "npm run build"

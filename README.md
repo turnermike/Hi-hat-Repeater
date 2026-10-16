@@ -19,7 +19,7 @@ installation instructions, and release notes are maintained in [readme.txt](./re
 - **WordPress Standards**: Follows WordPress coding standards and best practices
 - **ACF Integration**: Fully compatible with Advanced Custom Fields
 - **Responsive Design**: Clean, responsive admin interface
-- **Development Tools**: Linting, testing, and build tooling
+- **Development Tools**: Linting and build tooling
 
 ## Requirements
 
@@ -61,7 +61,7 @@ composer install
 npm install
 
 # Run development tools
-composer run check      # Run lint, analyze, and test
+composer run check      # Run PHP lint checks
 npm run lint           # Lint CSS and JS files
 ```
 
@@ -142,15 +142,10 @@ hi-hat-repeater/
 │   └── input.css                # Admin styles
 ├── js/
 │   └── input.js                 # Admin JavaScript
-├── tests/
-│   ├── bootstrap.php            # Test bootstrap
-│   └── HiHatRepeaterFieldTest.php # PHPUnit tests
 ├── composer.json                # PHP dependencies
 ├── composer.lock                # Composer lock file
 ├── package.json                 # Node.js dependencies
 ├── phpcs.xml                    # PHP CodeSniffer config
-├── phpstan.neon                 # PHPStan config
-├── phpunit.xml                  # PHPUnit config
 ├── postcss.config.js            # PostCSS config
 ├── LICENSE                      # License file
 ├── WARP.md                      # Development notes
@@ -166,8 +161,6 @@ npm install
 
 # Run code quality checks
 composer run lint       # PHP_CodeSniffer
-composer run test       # PHPUnit tests
-composer run analyze    # PHPStan static analysis
 composer run check      # Run all checks
 
 # Build assets
@@ -196,8 +189,7 @@ npm run clean
 This plugin follows WordPress coding standards. Before submitting a pull request:
 
 - Run `composer run lint` to check PHP code standards
-- Run `composer run analyze` for static analysis
-- Ensure all tests pass with `composer run test`
+- Verify plugin behavior manually in WordPress with ACF
 
 ## Creating a GitHub Release
 
@@ -297,9 +289,7 @@ process once the plugin is approved.
 - Full WPGraphQL ACF integration
 - Automatic GraphQL schema registration
 - WordPress coding standards compliance
-- PHPUnit test suite
 - Asset build system with PostCSS and Terser
-- PHPStan static analysis support
 - Comprehensive development tooling
 
 ## Support
