@@ -39,11 +39,11 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base
 				<?php foreach ($values as $i => $value) : ?>
 					<div class="hi-hat-repeater-item" style="margin-bottom: 20px;">
 						<?php $this->render_wysiwyg_item($field, $value, $i); ?>
-						<a href="#" class="hi-hat-repeater-remove-button button button-small"><?php esc_html_e('Remove', 'hi-hat-repeater'); ?></a>
+						<a href="#" class="hi-hat-repeater-remove-button button button-small" style="margin:14px 0"><?php esc_html_e('Remove', 'hi-hat-repeater'); ?></a>
 					</div>
 				<?php endforeach; ?>
 			</div>
-			<a href="#" class="hi-hat-repeater-add-button button button-primary" style="margin-top: 28px;"><?php esc_html_e('Add', 'hi-hat-repeater'); ?></a>
+			<a href="#" class="hi-hat-repeater-add-button button button-primary" style="margin-top: 10px;"><?php esc_html_e('Add', 'hi-hat-repeater'); ?></a>
 		</div>
 <?php
 	}

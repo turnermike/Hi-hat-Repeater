@@ -24,7 +24,7 @@ class Hi_Hat_Repeater_Field_Image extends Hi_Hat_Repeater_Field_Base {
 	 */
 	public function render_field( $field ) {
 		acf_enqueue_uploader();
-		
+
 		// Ensure media library scripts are enqueued
 		wp_enqueue_media();
 
@@ -43,11 +43,11 @@ class Hi_Hat_Repeater_Field_Image extends Hi_Hat_Repeater_Field_Base {
 				<?php foreach ( $values as $i => $value ) : ?>
 					<div class="hi-hat-repeater-item">
 						<?php $this->render_image_item( $field, $value, $i ); ?>
-						<a href="#" class="hi-hat-repeater-remove-button button button-small" style="margin-top:14px"><?php esc_html_e( 'Remove', 'hi-hat-repeater' ); ?></a>
+						<a href="#" class="hi-hat-repeater-remove-button button button-small" style="margin:14px 0"><?php esc_html_e( 'Remove', 'hi-hat-repeater' ); ?></a>
 					</div>
 				<?php endforeach; ?>
 			</div>
-			<a href="#" class="hi-hat-repeater-add-button button button-primary" style="margin-top: 28px;"><?php esc_html_e( 'Add', 'hi-hat-repeater' ); ?></a>
+			<a href="#" class="hi-hat-repeater-add-button button button-primary" style="margin-top: 10px;"><?php esc_html_e( 'Add', 'hi-hat-repeater' ); ?></a>
 		</div>
 		<?php
 	}
