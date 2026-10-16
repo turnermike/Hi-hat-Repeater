@@ -1,4 +1,6 @@
 (function ($) {
+  var editorInstanceCount = 0;
+
   function updateGroupRowOrder($repeater) {
     $repeater.find('tbody tr.acf-row').not('.acf-clone').each(function (index) {
       $(this).find('.acf-row-handle.order span').text(index + 1);
@@ -127,6 +129,81 @@
     $item.find('.hi-hat-repeater-image-select-button').text('Select Image');
   }
 
+  function getWysiwygEditorSettings($repeater, editorId) {
+    var settings = $repeater.data('hiHatEditorSettings');
+    if (settings) {
+      return settings;
+    }
+
+    var preInit = window.tinyMCEPreInit;
+    var tinyMceSettings = preInit && preInit.mceInit && preInit.mceInit[editorId];
+    var quicktagsSettings = preInit && preInit.qtInit && preInit.qtInit[editorId];
+
+    settings = {
+      tinymce: tinyMceSettings ? $.extend({}, tinyMceSettings) : true,
+      quicktags: quicktagsSettings ? $.extend({}, quicktagsSettings) : true,
+      mediaButtons: true,
+    };
+    $repeater.data('hiHatEditorSettings', settings);
+    return settings;
+  }
+
+  function reindexWysiwygItems($repeater) {
+    var fieldName = $repeater.data('name');
+    $repeater.find('.hi-hat-repeater-item').each(function (index) {
+      $(this).find('.wp-editor-area').attr('name', fieldName + '[' + index + ']');
+    });
+  }
+
+  function initializeWysiwygItem($repeater, $item, index) {
+    var $textarea = $item.find('.wp-editor-area').first();
+    var editorId = $textarea.attr('id');
+    var settings = getWysiwygEditorSettings($repeater, editorId);
+    var newEditorId = editorId + '_repeat_' + editorInstanceCount++;
+    var newName = $repeater.data('name') + '[' + index + ']';
+    var $newTextarea = $textarea.clone(false, false)
+      .attr({
+        id: newEditorId,
+        name: newName,
+      })
+      .removeAttr('aria-hidden style')
+      .val('');
+
+    $textarea.closest('.wp-editor-wrap').replaceWith($newTextarea);
+
+    if (!window.wp || !wp.editor || typeof wp.editor.initialize !== 'function') {
+      console.error('The WordPress editor API is not available to initialize the repeater editor.');
+      return;
+    }
+
+    wp.editor.initialize(newEditorId, {
+      tinymce: settings.tinymce === true ? true : $.extend({}, settings.tinymce),
+      quicktags: settings.quicktags === true ? true : $.extend({}, settings.quicktags),
+      mediaButtons: settings.mediaButtons,
+    });
+  }
+
+  function clearWysiwygItem($item) {
+    var editorId = $item.find('.wp-editor-area').first().attr('id');
+    var editor = editorId && window.tinymce ? window.tinymce.get(editorId) : null;
+
+    if (editor) {
+      editor.setContent('');
+      editor.save();
+      return;
+    }
+
+    $item.find('.wp-editor-area').val('');
+  }
+
+  function removeWysiwygEditor($item) {
+    var editorId = $item.find('.wp-editor-area').first().attr('id');
+
+    if (editorId && window.wp && wp.editor && typeof wp.editor.remove === 'function') {
+      wp.editor.remove(editorId);
+    }
+  }
+
   function getMediaFrame() {
     return wp.media({
       title: 'Select Image',
@@ -166,10 +243,25 @@
     e.preventDefault();
     var $repeater = $(this).closest('.acf-hi-hat-repeater');
     var $itemsWrap = $repeater.find('.hi-hat-repeater-items-wrap');
+    var isWysiwyg = $repeater.data('field-type') === 'wysiwyg';
+
+    if (isWysiwyg) {
+      reindexWysiwygItems($repeater);
+    }
+
     var $lastItem = $itemsWrap.find('.hi-hat-repeater-item').last();
     var $newItem = $lastItem.clone(false, false);
-    resetRepeaterItem($newItem);
+    var index = $itemsWrap.find('.hi-hat-repeater-item').length;
+
+    if (!isWysiwyg) {
+      resetRepeaterItem($newItem);
+    }
+
     $itemsWrap.append($newItem);
+
+    if (isWysiwyg) {
+      initializeWysiwygItem($repeater, $newItem, index);
+    }
   });
 
   $(document).on('click', '.acf-hi-hat-repeater .hi-hat-repeater-remove-button', function (e) {
@@ -177,13 +269,25 @@
     var $repeater = $(this).closest('.acf-hi-hat-repeater');
     var $items = $repeater.find('.hi-hat-repeater-item');
     var $item = $(this).closest('.hi-hat-repeater-item');
+    var isWysiwyg = $repeater.data('field-type') === 'wysiwyg';
 
     if ($items.length <= 1) {
-      resetRepeaterItem($item);
+      if (isWysiwyg) {
+        clearWysiwygItem($item);
+      } else {
+        resetRepeaterItem($item);
+      }
       return;
     }
 
+    if (isWysiwyg) {
+      removeWysiwygEditor($item);
+    }
     $item.remove();
+
+    if (isWysiwyg) {
+      reindexWysiwygItems($repeater);
+    }
   });
 
   $(document).on('click', '.acf-hi-hat-repeater .hi-hat-repeater-image-select-button', function (e) {

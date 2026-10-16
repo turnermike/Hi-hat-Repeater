@@ -33,6 +33,10 @@ class Hi_Hat_Repeater_Field_Wysiwyg extends Hi_Hat_Repeater_Field_Base
 		acf_enqueue_uploader();
 
 		$values = is_array($field['value']) ? $field['value'] : array('');
+		if (empty($values)) {
+			$values = array('');
+		}
+
 ?>
 		<div class="acf-hi-hat-repeater" data-name="<?php echo esc_attr($field['name']); ?>" data-field-type="wysiwyg">
 			<div class="hi-hat-repeater-items-wrap">

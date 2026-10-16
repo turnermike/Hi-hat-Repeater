@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Plugin Name: Hi-Hat Repeater
+ * Plugin Name: Hi-hat Repeater
  * Plugin URI:  https://github.com/turnermike/Hi-hat-Repeater
  * Description: An Advanced Custom Fields add-on for a repeater-like field with multiple text areas. Includes GraphQL support.
- * Version:     1.2.1
+ * Version:     1.3.0
  * Author:      Hi-hat Consulting
  * Author URI:  https://www.hi-hatconsulting.com
- * License:     
- * License URI: 
+ * License:
+ * License URI:
  * Text Domain: hi-hat-repeater
  * Requires at least: 5.0
  * Tested up to: 6.4
@@ -208,12 +208,15 @@ function include_field_types_hi_hat_repeater($version)
     include_once 'fields/class-hi-hat-repeater-field-base.php';
     include_once 'fields/class-hi-hat-repeater-field-textarea.php';
     include_once 'fields/class-hi-hat-repeater-field-image.php';
+    include_once 'fields/class-hi-hat-repeater-field-wysiwyg.php';
     include_once 'fields/class-acf-field-hi-hat-repeater-group.php';
 
     // Register the field types with ACF
     acf_register_field_type(new Hi_Hat_Repeater_Field_Textarea());
 
     acf_register_field_type(new Hi_Hat_Repeater_Field_Image());
+
+    acf_register_field_type(new Hi_Hat_Repeater_Field_Wysiwyg());
 
     try {
         $group_field = new acf_field_hi_hat_repeater_group();
@@ -238,8 +241,8 @@ function enqueue_hi_hat_repeater_admin_styles()
     wp_enqueue_script(
         'hi-hat-repeater-admin',
         HI_HAT_REPEATER_URL . 'js/hi-hat-repeater-admin.js',
-        array('jquery', 'acf-input', 'media-editor'),
-        '1.0.0',
+        array('jquery', 'acf-input', 'media-editor', 'editor'),
+        '1.0.2',
         true
     );
 }
