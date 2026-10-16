@@ -18,26 +18,9 @@
     "require": {
         "php": ">=7.4"
     },
-    "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-        "phpcompatibility/php-compatibility": "^9.3",
-        "squizlabs/php_codesniffer": "^3.7",
-        "wp-coding-standards/wpcs": "^3.0"
-    },
     "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        },
         "optimize-autoloader": true,
         "sort-packages": true
-    },
-    "scripts": {
-        "lint": "phpcs",
-        "lint:fix": "phpcbf",
-        "check": [
-            "@lint"
-        ],
-        "install-codestandards": "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run"
     },
     "autoload": {
         "psr-4": {
