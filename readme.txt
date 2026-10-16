@@ -2,7 +2,7 @@
 Contributors: turnermike
 Tags: advanced-custom-fields, repeater, textarea, image, wysiwyg
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.3.0
 License: GPL-2.0-or-later
@@ -29,6 +29,10 @@ WPGraphQL ACF integration is available for supported field types.
 4. Create or edit an ACF field group and add a Hi-hat Repeater field type.
 
 == Frequently Asked Questions ==
+
+= Where is the plugin settings page? =
+
+Hi-hat Repeater does not add a separate WordPress admin settings page. After activation, its field types appear in the field type options when you add or edit a field in an ACF field group.
 
 = Which field types are included? =
 

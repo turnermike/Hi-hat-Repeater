@@ -21,6 +21,17 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+if (defined('HI_HAT_REPEATER_PATH') || class_exists('Hi_Hat_Repeater_Field_Base', false)
+    || function_exists('include_field_types_hi_hat_repeater')
+    || function_exists('hi_hat_repeater_include_field_types')) {
+    add_action('admin_notices', function () {
+        echo '<div class="notice notice-error"><p>';
+        esc_html_e('Multiple copies of Hi-hat Repeater are active. Deactivate the duplicate copy and keep only one plugin installation.', 'hi-hat-repeater');
+        echo '</p></div>';
+    });
+    return;
+}
+
 // Check if ACF is active.
 if (! class_exists('acf')) {
     return;
@@ -203,25 +214,27 @@ add_filter('wpgraphql/acf/should_field_group_show_in_graphql', function ($should
  *
  * @param int $version The ACF version.
  */
-function hi_hat_repeater_include_field_types($version)
-{
-    include_once 'fields/class-hi-hat-repeater-field-base.php';
-    include_once 'fields/class-hi-hat-repeater-field-textarea.php';
-    include_once 'fields/class-hi-hat-repeater-field-image.php';
-    include_once 'fields/class-hi-hat-repeater-field-wysiwyg.php';
-    include_once 'fields/class-acf-field-hi-hat-repeater-group.php';
+if (!function_exists('hi_hat_repeater_include_field_types')) {
+    function hi_hat_repeater_include_field_types($version)
+    {
+        require_once __DIR__ . '/fields/class-hi-hat-repeater-field-base.php';
+        require_once __DIR__ . '/fields/class-hi-hat-repeater-field-textarea.php';
+        require_once __DIR__ . '/fields/class-hi-hat-repeater-field-image.php';
+        require_once __DIR__ . '/fields/class-hi-hat-repeater-field-wysiwyg.php';
+        require_once __DIR__ . '/fields/class-acf-field-hi-hat-repeater-group.php';
 
-    // Register the field types with ACF
-    acf_register_field_type(new Hi_Hat_Repeater_Field_Textarea());
+        // Register the field types with ACF
+        acf_register_field_type(new Hi_Hat_Repeater_Field_Textarea());
 
-    acf_register_field_type(new Hi_Hat_Repeater_Field_Image());
+        acf_register_field_type(new Hi_Hat_Repeater_Field_Image());
 
-    acf_register_field_type(new Hi_Hat_Repeater_Field_Wysiwyg());
+        acf_register_field_type(new Hi_Hat_Repeater_Field_Wysiwyg());
 
-    try {
-        $group_field = new acf_field_hi_hat_repeater_group();
-        acf_register_field_type($group_field);
-    } catch (Exception $e) {
+        try {
+            $group_field = new acf_field_hi_hat_repeater_group();
+            acf_register_field_type($group_field);
+        } catch (Exception $e) {
+        }
     }
 }
 
@@ -230,21 +243,23 @@ add_action('acf/include_field_types', 'hi_hat_repeater_include_field_types');
 /**
  * Enqueue admin styles for the hi-hat repeater field.
  */
-function hi_hat_repeater_enqueue_admin_styles()
-{
-    wp_enqueue_style(
-        'hi-hat-repeater-admin',
-        HI_HAT_REPEATER_URL . 'css/hi-hat-repeater-admin.css',
-        array(),
-        '1.0.0'
-    );
-    wp_enqueue_script(
-        'hi-hat-repeater-admin',
-        HI_HAT_REPEATER_URL . 'js/hi-hat-repeater-admin.js',
-        array('jquery', 'acf-input', 'media-editor', 'editor'),
-        '1.0.2',
-        true
-    );
+if (!function_exists('hi_hat_repeater_enqueue_admin_styles')) {
+    function hi_hat_repeater_enqueue_admin_styles()
+    {
+        wp_enqueue_style(
+            'hi-hat-repeater-admin',
+            HI_HAT_REPEATER_URL . 'css/hi-hat-repeater-admin.css',
+            array(),
+            '1.0.0'
+        );
+        wp_enqueue_script(
+            'hi-hat-repeater-admin',
+            HI_HAT_REPEATER_URL . 'js/hi-hat-repeater-admin.js',
+            array('jquery', 'acf-input', 'media-editor', 'editor'),
+            '1.0.2',
+            true
+        );
+    }
 }
 
 add_action('admin_enqueue_scripts', 'hi_hat_repeater_enqueue_admin_styles');

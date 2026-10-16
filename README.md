@@ -41,6 +41,11 @@ Custom ACF repeater fields for text, images, WYSIWYG, and grouped content.
 
 ### Manual Installation
 
+Keep only one active installation. The distribution ZIP uses the lowercase
+`hi-hat-repeater` directory. On case-sensitive servers, an existing
+`Hi-hat-Repeater` directory is a separate plugin copy; deactivate it before
+activating the lowercase installation.
+
 1. Download the latest release from [GitHub](https://github.com/yourusername/hi-hat-repeater/releases)
 2. Upload the `hi-hat-repeater` folder to `/wp-content/plugins/`
 3. Activate the plugin through the **Plugins** menu in WordPress
@@ -64,6 +69,10 @@ npm run lint           # Lint CSS and JS files
 ```
 
 ## Usage
+
+Hi-hat Repeater does not add a separate WordPress admin settings page. After
+activation, its field types appear in the field type options when you add or edit
+a field in an ACF field group.
 
 ### Basic Usage
 
