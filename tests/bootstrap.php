@@ -1,4 +1,9 @@
 <?php
+
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * Test bootstrap file for Hi-Hat Repeater plugin.
  */

@@ -1,5 +1,9 @@
 <?php
 
+if (! defined('ABSPATH')) {
+    exit;
+}
+
 if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
     class acf_field_hi_hat_repeater_group extends acf_field
@@ -7,14 +11,14 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
         function __construct()
         {
             $this->name = 'hi_hat_repeater_group';
-            $this->label = __('Hi-hat Repeater - Group', 'acf');
+            $this->label = __('Hi-hat Repeater - Group', 'hi-hat-repeater');
             $this->category = 'layout';
             $this->defaults = array(
                 'sub_fields' => array(),
                 'min' => 0,
                 'max' => 0,
                 'layout' => 'table',
-                'button_label' => __('Add Row', 'acf'),
+                'button_label' => __('Add Row', 'hi-hat-repeater'),
                 'collapsed' => ''
             );
 
@@ -34,7 +38,7 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
         {
             // Prevent duplicate rendering - check if this field has already been output
             static $rendered_fields = array();
-            $field_key = $field['key'] . '_' . (isset($_GET['post']) ? $_GET['post'] : '');
+            $field_key = $field['key'] . '_' . get_the_ID();
 
             if (isset($rendered_fields[$field_key])) {
                 return;
@@ -123,7 +127,7 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
                 <?php if ($show_add): ?>
                     <div class="acf-actions">
-                        <a class="acf-button button button-primary" href="#" data-event="add-row"><?php echo acf_esc_html($field['button_label']); ?></a>
+                        <a class="acf-button button button-primary" href="#" data-event="add-row"><?php echo esc_html($field['button_label']); ?></a>
                     </div>
                 <?php endif; ?>
 
@@ -141,10 +145,10 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
             $show_order = true;
             $show_remove = true;
         ?>
-            <tr class="acf-row<?php if ($i === 'acfcloneindex') echo ' acf-clone'; ?>" data-id="<?php echo $i; ?>">
+            <tr class="acf-row<?php if ($i === 'acfcloneindex') echo ' acf-clone'; ?>" data-id="<?php echo esc_attr($i); ?>">
                 <?php if ($show_order): ?>
-                    <td class="acf-row-handle order" title="<?php _e('Drag to reorder', 'acf'); ?>">
-                        <?php if ($i !== 'acfcloneindex'): ?><?php echo ($i + 1); ?><?php endif; ?>
+                    <td class="acf-row-handle order" title="<?php esc_attr_e('Drag to reorder', 'hi-hat-repeater'); ?>">
+                        <?php if ($i !== 'acfcloneindex'): ?><?php echo esc_html((int) $i + 1); ?><?php endif; ?>
                     </td>
                 <?php endif; ?>
 
@@ -154,7 +158,7 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
                     $sub_field['value'] = isset($row[$sub_field_key]) ? $row[$sub_field_key] : '';
                     $sub_field['prefix'] = $field['name'] . '[' . $i . ']';
                     ?>
-                    <td class="acf-field" data-name="<?php echo $sub_field['_name']; ?>" data-type="<?php echo $sub_field['type']; ?>" data-key="<?php echo $sub_field['key']; ?>">
+                    <td class="acf-field" data-name="<?php echo esc_attr($sub_field['_name']); ?>" data-type="<?php echo esc_attr($sub_field['type']); ?>" data-key="<?php echo esc_attr($sub_field['key']); ?>">
                         <?php acf_render_field($sub_field); ?>
                     </td>
                 <?php endforeach; ?>
@@ -178,7 +182,7 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
         ?>
             <div class="acf-field acf-field-setting-sub_fields" data-setting="sub_fields" data-name="sub_fields">
                 <div class="acf-label">
-                    <label><?php esc_html_e('Sub Fields', 'acf'); ?></label>
+                    <label><?php esc_html_e('Sub Fields', 'hi-hat-repeater'); ?></label>
                 </div>
                 <div class="acf-input acf-input-sub">
                     <?php acf_get_view('acf-field-group/fields', $args); ?>
@@ -187,7 +191,7 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 <?php
 
             acf_render_field_setting($field, array(
-                'label' => __('Minimum Rows', 'acf'),
+                'label' => __('Minimum Rows', 'hi-hat-repeater'),
                 'instructions' => '',
                 'type' => 'number',
                 'name' => 'min',
@@ -195,7 +199,7 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
             ));
 
             acf_render_field_setting($field, array(
-                'label' => __('Maximum Rows', 'acf'),
+                'label' => __('Maximum Rows', 'hi-hat-repeater'),
                 'instructions' => '',
                 'type' => 'number',
                 'name' => 'max',
@@ -203,24 +207,24 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
             ));
 
             acf_render_field_setting($field, array(
-                'label' => __('Layout', 'acf'),
+                'label' => __('Layout', 'hi-hat-repeater'),
                 'instructions' => '',
                 'type' => 'radio',
                 'name' => 'layout',
                 'layout' => 'horizontal',
                 'choices' => array(
-                    'table' => __('Table', 'acf'),
-                    'block' => __('Block', 'acf'),
-                    'row' => __('Row', 'acf')
+                    'table' => __('Table', 'hi-hat-repeater'),
+                    'block' => __('Block', 'hi-hat-repeater'),
+                    'row' => __('Row', 'hi-hat-repeater')
                 )
             ));
 
             acf_render_field_setting($field, array(
-                'label' => __('Button Label', 'acf'),
+                'label' => __('Button Label', 'hi-hat-repeater'),
                 'instructions' => '',
                 'type' => 'text',
                 'name' => 'button_label',
-                'placeholder' => __('Add Row', 'acf')
+                'placeholder' => __('Add Row', 'hi-hat-repeater')
             ));
         }
 
@@ -347,12 +351,14 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
 
             $min = (int) $field['min'];
             if ($min && $count < $min) {
-                return sprintf(__('Minimum rows not reached (%d / %d)', 'acf'), $count, $min);
+                /* translators: 1: current number of rows, 2: minimum number of rows. */
+                return sprintf(__('Minimum rows not reached (%1$d / %2$d)', 'hi-hat-repeater'), $count, $min);
             }
 
             $max = (int) $field['max'];
             if ($max && $count > $max) {
-                return sprintf(__('Maximum rows exceeded (%d / %d)', 'acf'), $count, $max);
+                /* translators: 1: current number of rows, 2: maximum number of rows. */
+                return sprintf(__('Maximum rows exceeded (%1$d / %2$d)', 'hi-hat-repeater'), $count, $max);
             }
 
             return $valid;

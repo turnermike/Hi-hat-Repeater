@@ -1,8 +1,15 @@
-# Hi-Hat Repeater
+=== Hi-hat Repeater ===
+
+Stable tag: 1.3.0
+Requires at least: 5.0
+Tested up to: 7.1
+Requires PHP: 7.4
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Custom ACF repeater fields for text, images, WYSIWYG, and grouped content.
 
 [![License: GPL v2](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://www.gnu.org/licenses/gpl-2.0.html)
-
-An Advanced Custom Fields (ACF) add-on that provides custom repeater-style field types for structured content: **Hi-hat Repeater - Textarea**, **Hi-hat Repeater - Image**, and **Hi-hat Repeater - Group** (repeater with sub-fields).
 
 ## Features
 
@@ -19,7 +26,7 @@ An Advanced Custom Fields (ACF) add-on that provides custom repeater-style field
 
 ## Requirements
 
-- WordPress 5.0 or higher (tested up to 6.4)
+- WordPress 5.0 or higher (tested up to 7.1)
 - PHP 7.4 or higher
 - Advanced Custom Fields (ACF) 5.0.0 or higher
 - WPGraphQL ACF 2.0.0 or higher (for GraphQL features)
