@@ -4,9 +4,9 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-if (!class_exists('acf_field_hi_hat_repeater_group')) :
+if (!class_exists('Hi_Hat_Repeater_Field_Group_Table')) :
 
-    class acf_field_hi_hat_repeater_group extends acf_field
+    class Hi_Hat_Repeater_Field_Group_Table extends acf_field
     {
         function __construct()
         {
@@ -57,7 +57,7 @@ if (!class_exists('acf_field_hi_hat_repeater_group')) :
             $value = is_array($field['value']) ? $field['value'] : array();
 
             $div = array(
-                'class' => 'acf-repeater',
+                'class' => 'acf-repeater hi-hat-repeater-group',
                 'data-min' => $field['min'],
                 'data-max' => $field['max']
             );

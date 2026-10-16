@@ -212,14 +212,22 @@
     });
   }
 
-  $(document).on('click', '.acf-repeater [data-event="add-row"]', function (e) {
+  $(document).on('click', '.hi-hat-repeater-group [data-event="add-row"]', function (e) {
+    if (!$(this).closest('.acf-repeater').hasClass('hi-hat-repeater-group')) {
+      return;
+    }
     e.preventDefault();
+    e.stopPropagation();
     var $repeater = $(this).closest('.acf-repeater');
     addGroupRow($repeater);
   });
 
-  $(document).on('click', '.acf-repeater [data-event="remove-row"]', function (e) {
+  $(document).on('click', '.hi-hat-repeater-group [data-event="remove-row"]', function (e) {
+    if (!$(this).closest('.acf-repeater').hasClass('hi-hat-repeater-group')) {
+      return;
+    }
     e.preventDefault();
+    e.stopPropagation();
     var $repeater = $(this).closest('.acf-repeater');
     var $row = $(this).closest('tr');
     var $tbody = $repeater.find('tbody');

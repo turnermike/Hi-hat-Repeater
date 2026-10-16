@@ -32,13 +32,6 @@ if (defined('HI_HAT_REPEATER_PATH') || class_exists('Hi_Hat_Repeater_Field_Base'
     return;
 }
 
-// Check if ACF is active.
-if (! class_exists('acf')) {
-    return;
-}
-
-
-
 // Define constants.
 if (!defined('HI_HAT_REPEATER_URL')) {
     define('HI_HAT_REPEATER_URL', plugin_dir_url(__FILE__));
@@ -47,47 +40,24 @@ if (!defined('HI_HAT_REPEATER_PATH')) {
     define('HI_HAT_REPEATER_PATH', plugin_dir_path(__FILE__));
 }
 
-
-// Register GraphQL support for WPGraphQL ACF as early as possible
-add_action('wpgraphql/acf/init', function () {
-    if (function_exists('register_graphql_acf_field_type')) {
-        register_graphql_acf_field_type('hi_hat_repeater_textarea', [
-            'graphql_type' => ['list_of' => 'String']
-        ]);
-        register_graphql_acf_field_type('hi_hat_repeater_image', [
-            'graphql_type' => ['list_of' => 'MediaItem']
-        ]);
-        // Register the hi_hat_repeater_group field type
-        // This behaves like ACF's repeater with sub_fields
-        register_graphql_acf_field_type('hi_hat_repeater_group', [
-            'graphql_type' => function ($field_config, $acf_field_type) {
-                $sub_field_group = $field_config->get_acf_field();
-                $parent_type     = $field_config->get_parent_graphql_type_name($sub_field_group);
-                $field_name      = $field_config->get_graphql_field_name();
-
-                // Use WPGraphQL's Utils class if available, otherwise format manually
-                if (class_exists('\WPGraphQL\Utils\Utils')) {
-                    $type_name = \WPGraphQL\Utils\Utils::format_type_name($parent_type . ' ' . $field_name);
-                } else {
-                    // Fallback: simple format conversion
-                    $type_name = ucfirst($parent_type) . ucfirst($field_name);
-                }
-
-                $sub_field_group['graphql_type_name']  = $type_name;
-                $sub_field_group['graphql_field_name'] = $type_name;
-                $sub_field_group['locations']          = null;
-
-                // Register the sub fields as a GraphQL type
-                $field_config->get_registry()->register_acf_field_groups_to_graphql(
-                    [$sub_field_group]
-                );
-
-                return ['list_of' => $type_name];
-            }
-        ]);
+add_action('admin_init', function () {
+    if (!class_exists('acf')) {
+        $plugin = plugin_basename(__FILE__);
+        if (is_plugin_active($plugin)) {
+            deactivate_plugins($plugin, true, is_plugin_active_for_network($plugin));
+            // Suppress WordPress's activation success notice after deactivating.
+            unset($_GET['activate'], $_GET['activated']);
+        }
     }
 });
 
+add_action('all_admin_notices', function () {
+    if (!class_exists('acf')) {
+        echo '<div class="notice notice-warning"><p>';
+        esc_html_e('Hi-hat Repeater has been deactivated because it requires Advanced Custom Fields. Install and activate Advanced Custom Fields, then activate Hi-hat Repeater again.', 'hi-hat-repeater');
+        echo '</p></div>';
+    }
+});
 
 
 // Register GraphQL support for WPGraphQL ACF as early as possible
@@ -230,11 +200,7 @@ if (!function_exists('hi_hat_repeater_include_field_types')) {
 
         acf_register_field_type(new Hi_Hat_Repeater_Field_Wysiwyg());
 
-        try {
-            $group_field = new acf_field_hi_hat_repeater_group();
-            acf_register_field_type($group_field);
-        } catch (Exception $e) {
-        }
+        acf_register_field_type(new Hi_Hat_Repeater_Field_Group_Table());
     }
 }
 
@@ -246,6 +212,10 @@ add_action('acf/include_field_types', 'hi_hat_repeater_include_field_types');
 if (!function_exists('hi_hat_repeater_enqueue_admin_styles')) {
     function hi_hat_repeater_enqueue_admin_styles()
     {
+        if (!class_exists('acf')) {
+            return;
+        }
+
         wp_enqueue_style(
             'hi-hat-repeater-admin',
             HI_HAT_REPEATER_URL . 'css/hi-hat-repeater-admin.css',
@@ -256,7 +226,7 @@ if (!function_exists('hi_hat_repeater_enqueue_admin_styles')) {
             'hi-hat-repeater-admin',
             HI_HAT_REPEATER_URL . 'js/hi-hat-repeater-admin.js',
             array('jquery', 'acf-input', 'media-editor', 'editor'),
-            '1.0.2',
+            '1.0.3',
             true
         );
     }
